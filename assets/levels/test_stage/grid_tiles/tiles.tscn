@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/levels/test_stage/grid_tiles/floor_mesh.tres" id="1_n3uyq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vk82v"]
+size = Vector3(2.0031, 0.0231016, 2.01163)
+
+[node name="tiles" type="Node3D"]
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, 0)
+mesh = ExtResource("1_n3uyq")
+
+[node name="FloorCol" type="StaticBody3D" parent="Floor"]
+
+[node name="FloorShape" type="CollisionShape3D" parent="Floor/FloorCol"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01217, 0)
+shape = SubResource("BoxShape3D_vk82v")
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 3.99832, 1, 1.99721)
+mesh = ExtResource("1_n3uyq")
+
+[node name="WallCol" type="StaticBody3D" parent="Wall"]
+
+[node name="WallShape" type="CollisionShape3D" parent="Wall/WallCol"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01217, 0)
+shape = SubResource("BoxShape3D_vk82v")

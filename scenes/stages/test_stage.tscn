@@ -1,0 +1,46 @@
+[gd_scene load_steps=4 format=3 uid="uid://chfrfgpckvm3r"]
+
+[ext_resource type="Script" path="res://scripts/scenes/spawn_player.gd" id="1_bnbet"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_66rt5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vla6n"]
+
+[node name="Stage" type="Node3D"]
+
+[node name="level" type="Node" parent="."]
+
+[node name="floor" type="MeshInstance3D" parent="level"]
+transform = Transform3D(75.4226, 0, 0, 0, 0.122984, 0, 0, 0, 73.2404, 0, 0, 0)
+mesh = SubResource("BoxMesh_66rt5")
+skeleton = NodePath("../..")
+
+[node name="floor_collider" type="StaticBody3D" parent="level/floor"]
+
+[node name="floor_shape" type="CollisionShape3D" parent="level/floor/floor_collider"]
+shape = SubResource("BoxShape3D_vla6n")
+
+[node name="level_camera" type="Camera3D" parent="level"]
+transform = Transform3D(1, 0, 0, 0, 0.91496, 0.403545, 0, -0.403545, 0.91496, 1.255, 31.684, 55.302)
+
+[node name="blocks" type="Node" parent="level"]
+
+[node name="block" type="MeshInstance3D" parent="level/blocks"]
+transform = Transform3D(75.4226, 0, 0, 0, 0.122984, 0, 0, 0, 73.2404, 0, 0, 0)
+mesh = SubResource("BoxMesh_66rt5")
+skeleton = NodePath("../../..")
+
+[node name="block_collider" type="StaticBody3D" parent="level/blocks/block"]
+
+[node name="block_shape" type="CollisionShape3D" parent="level/blocks/block/block_collider"]
+shape = SubResource("BoxShape3D_vla6n")
+
+[node name="players" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.7095, 0)
+script = ExtResource("1_bnbet")
+characterCamera = NodePath("../level/level_camera")
+
+[node name="lighting" type="Node" parent="."]
+
+[node name="main_light" type="DirectionalLight3D" parent="lighting"]
+transform = Transform3D(0.999999, 0.00116767, 0.000646839, -0.00101493, 0.35035, 0.936618, 0.000867039, -0.936618, 0.350351, -98.5453, 45.7553, -18.8388)
