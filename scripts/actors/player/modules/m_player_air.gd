@@ -22,11 +22,11 @@ var cameraBasisVector
 ## How fast you slow down
 @export var deaccel = 22.5
 ## Player reactivity percentage, regarding suggently picking a different direction
-@export var reactivityPercent = 0.5
+#@export var reactivityPercent = 0.5
 ## Threshhold that's considered a sharp turn
-@export var sharp_turn_threshold = 140.0
+#@export var sharp_turn_threshold = 140.0
 ## How fast you turn
-@export var TURN_SPEED = 140
+#@export var TURN_SPEED = 140
 ## How fast you run
 @export var max_speed = 12.0
 
@@ -47,36 +47,43 @@ func _ready():
 	parent_module = player.movement_module
 
 ## Handle movment
-func process_movement(delta: float, linear_velocity: Vector3, forward: Vector3):
+func process_movement(delta: float, linear_velocity: Vector3, dir: Vector3):
 	var ground_module = parent_module.ground_movement
 	cameraBasisVector = player.level_camera.get_global_transform().basis
 	
 	vv = linear_velocity.y # Vertical velocity.
-
-	ground_module.hv = _calculateAerialMovement( delta, forward )
 	
-	linear_velocity = ground_module.hv + ( Vector3.UP * vv )
-	linear_velocity.y += -parent_module.gravity * delta
+	ground_module.hv.x = 0
+	ground_module.hv.z = 0
+	_calculateAerialMovement( delta, dir )
+	
+	linear_velocity.x = ground_module.hv.x
+	linear_velocity.z = ground_module.hv.z
+	linear_velocity.y = ( Vector3.UP.y * vv ) - (parent_module.gravity * delta)
 
 	return linear_velocity
 
 func _calculateAerialMovement( delta, dir, update_facing = true ):
 	var ground_module = parent_module.ground_movement
 	
-	if dir.length() > 0.1:
-		if ground_module.hspeed > 0.001:
-			ground_module.hdir = parent_module.adjust_facing(
-				mesh_xform,
-				ground_module.hdir, 
-				dir, 
-				delta, 
-				1.0 / ground_module.hspeed * TURN_SPEED, 
-				Vector3.UP
-			)
-		else:
-			ground_module.hdir = dir
+#	var newAngle = rad_to_deg(ground_module.hdir.angle_to(dir))
+#	var oppositionPercent = newAngle/180
+	
+	if dir.length() > 0:
+#		if ground_module.hspeed > 0.001:
+#			ground_module.hdir = parent_module.adjust_facing(
+#				mesh_xform,
+#				ground_module.hdir, 
+#				dir, 
+#				delta, 
+#				1.0 / ground_module.hspeed * TURN_SPEED, 
+#				Vector3.UP
+#			)
+#		else:
+		ground_module.hdir = dir
 
-		if ground_module.hspeed < ground_module.max_speed:
+		if ground_module.hspeed < max_speed:
+#			ground_module.hspeed += (accel + (accel * oppositionPercent)) * delta
 			ground_module.hspeed += accel * delta
 	else:
 		if air_idle_deaccel:
@@ -84,22 +91,23 @@ func _calculateAerialMovement( delta, dir, update_facing = true ):
 			if ground_module.hspeed < 0:
 				ground_module.hspeed = 0
 
-	if update_facing:
-		var facing_mesh = -mesh_xform.basis[0].normalized()
-		facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
-
-		if ground_module.hspeed > 0:
-			facing_mesh = parent_module.adjust_facing(
-				mesh_xform,
-				facing_mesh, 
-				dir, 
-				delta, 
-				1.0 / ground_module.hspeed * TURN_SPEED, 
-				Vector3.UP
-			)
-		ground_module.movement_dir = facing_mesh
-		var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
-		
-		mesh.set_transform(Transform3D(m3, mesh_xform.origin))
+#	if update_facing:
+#		var facing_mesh = -mesh_xform.basis[0].normalized()
+#		facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
+#
+#		if ground_module.hspeed > 0:
+#			facing_mesh = parent_module.adjust_facing(
+#				mesh_xform,
+#				facing_mesh, 
+#				dir, 
+#				delta, 
+#				1.0 / ground_module.hspeed * TURN_SPEED, 
+#				Vector3.UP
+#			)
+#		ground_module.movement_dir = facing_mesh
+#		var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
+#
+#		mesh.set_transform(Transform3D(m3, mesh_xform.origin))
 	
-	return ground_module.hdir * ground_module.hspeed
+	ground_module.hv.x = ground_module.hdir.x * ground_module.hspeed
+	ground_module.hv.z = ground_module.hdir.z * ground_module.hspeed

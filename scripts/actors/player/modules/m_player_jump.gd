@@ -9,7 +9,7 @@ var player
 
 ## How high you jump
 @export var jump_height = 6.0
-## How long the hangtime is
+## Time to arc of jump
 @export var jump_time = 4.0
 
 ## Minimum height a jump can manage

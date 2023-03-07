@@ -62,16 +62,14 @@ script = ExtResource("4_3yoex")
 
 [node name="ground_movement" type="Node" parent="modules/movement"]
 script = ExtResource("4_k440i")
-sharp_turn_threshold = 270.0
-TURN_SPEED = 160
 
 [node name="air_movement" type="Node" parent="modules/movement"]
 script = ExtResource("6_fsg8v")
-air_idle_deaccel = false
-accel = 170.0
-reactivityPercent = 0.7
-sharp_turn_threshold = 360.0
-TURN_SPEED = 270
+accel = 11.0
+deaccel = 45.0
+max_speed = 6.0
 
 [node name="jump_movement" type="Node" parent="modules/movement"]
 script = ExtResource("9_x01eq")
+jump_height = 5.0
+jump_time = 6.0
