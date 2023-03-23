@@ -26,11 +26,11 @@ var cameraBasisVector
 ## Threshhold that's considered a sharp turn
 #@export var sharp_turn_threshold = 140.0
 ## How fast you turn
-#@export var TURN_SPEED = 140
+@export var TURN_SPEED = 140
 ## How fast you run
 @export var max_speed = 12.0
 ## How quickly you deaccelerate from max speed
-#@export var max_speed_deaccel_multiplier = 0.7
+@export var max_speed_deaccel_multiplier = 0.7
 
 ## Horizontal velocity
 var hv: Vector3 = Vector3(0, 0, 0)
@@ -70,35 +70,27 @@ func process_movement(delta: float, linear_velocity: Vector3, dir: Vector3):
 	
 	return linear_velocity
 
-func _calculateFloorMovement( delta, dir ):
-#	if direction:
-#		velocity.x = direction.x * SPEED
-#		velocity.z = direction.z * SPEED
-#	else:
-#		velocity.x = move_toward(velocity.x, 0, SPEED)
-#		velocity.z = move_toward(velocity.z, 0, SPEED)
-	
-#	var newAngle = rad_to_deg(hdir.angle_to(dir))
-#	var oppositionPercent = newAngle/180
+func _calculateFloorMovement( delta, dir ):	
+	var newAngle = rad_to_deg(hdir.angle_to(dir))
+	var oppositionPercent = newAngle/180
 	
 	if dir.length() > 0:
-#		if hspeed > 0.001:
-#			hdir = parent_module.adjust_facing(
-#				mesh_xform,
-#				hdir, 
-#				dir, 
-#				delta, 
-#				1.0 / hspeed * TURN_SPEED, 
-#				Vector3.UP
-#			)
-#		else:
-		hdir = dir
+		if hspeed > 0.001:
+			hdir = parent_module.adjust_facing(
+				hdir, 
+				dir, 
+				delta, 
+				1.0 / hspeed * TURN_SPEED, 
+				Vector3.UP
+			)
+		else:
+			hdir = dir
 		
 		if hspeed < max_speed:
-#			hspeed += ( accel + (accel * oppositionPercent) ) * delta
-			hspeed += accel * delta
-#		else:
-#			hspeed -= ( deaccel * delta ) * max_speed_deaccel_multiplier
+			hspeed += ( accel + (accel * oppositionPercent) ) * delta
+#			hspeed += accel * delta
+		else:
+			hspeed -= ( deaccel * delta ) * max_speed_deaccel_multiplier
 	else:
 		hspeed -= deaccel * delta
 		if hspeed < 0:
@@ -107,19 +99,18 @@ func _calculateFloorMovement( delta, dir ):
 	hv.x = hdir.x * hspeed
 	hv.z = hdir.z * hspeed
 	
-#	var facing_mesh = -mesh_xform.basis[0].normalized()
-#	facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
-#
-#	if hspeed > 0:
-#		facing_mesh = parent_module.adjust_facing(
-#			mesh_xform,
-#			facing_mesh, 
-#			dir, 
-#			delta, 
-#			1.0 / hspeed * TURN_SPEED, 
-#			Vector3.UP
-#		)
+	var facing_mesh = mesh_xform.basis[0].normalized()
+	facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
+
+	if hspeed > 0:
+		facing_mesh = parent_module.adjust_facing(
+			facing_mesh, 
+			dir, 
+			delta, 
+			1.0 / hspeed * TURN_SPEED, 
+			Vector3.UP
+		)
 #	movement_dir = facing_mesh
-#	var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
-	
-#	mesh.set_transform(Transform3D(m3, mesh_xform.origin))
+	var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
+
+	mesh.set_transform(Transform3D(m3, mesh_xform.origin))

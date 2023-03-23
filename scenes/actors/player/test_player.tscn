@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bvlifur6woann"]
+[gd_scene load_steps=15 format=3 uid="uid://bvlifur6woann"]
 
 [ext_resource type="Script" path="res://scripts/actors/player/player.gd" id="1_427t1"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="1_wo1xs"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_ground.gd" id="4_k440i"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/ps_jumping.gd" id="4_u23o6"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/ps_in_air.gd" id="5_ac5n7"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/ps_in_air_coyote_time.gd" id="6_e6k3i"]
 [ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_air.gd" id="6_fsg8v"]
 [ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_jump.gd" id="9_x01eq"]
 
@@ -28,6 +29,8 @@ platform_wall_layers = 1
 script = ExtResource("1_427t1")
 
 [node name="coyote_time" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.5
 
 [node name="model" type="Node3D" parent="."]
 
@@ -55,6 +58,9 @@ script = ExtResource("4_u23o6")
 [node name="in_air" type="Node" parent="state_machine"]
 script = ExtResource("5_ac5n7")
 
+[node name="in_air_coyote_time" type="Node" parent="state_machine"]
+script = ExtResource("6_e6k3i")
+
 [node name="modules" type="Node" parent="."]
 
 [node name="movement" type="Node" parent="modules"]
@@ -62,12 +68,13 @@ script = ExtResource("4_3yoex")
 
 [node name="ground_movement" type="Node" parent="modules/movement"]
 script = ExtResource("4_k440i")
+TURN_SPEED = 500
 
 [node name="air_movement" type="Node" parent="modules/movement"]
 script = ExtResource("6_fsg8v")
-accel = 11.0
-deaccel = 45.0
-max_speed = 6.0
+accel = 22.5
+deaccel = 180.0
+TURN_SPEED = 500
 
 [node name="jump_movement" type="Node" parent="modules/movement"]
 script = ExtResource("9_x01eq")
