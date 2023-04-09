@@ -8,8 +8,6 @@ var parent_module
 var player
 ## Player Mesh
 var mesh
-## Player Mesh Transform
-var mesh_xform
 ## Scale value for the model
 var CHAR_SCALE
 ## Direction the player is moving in
@@ -21,10 +19,6 @@ var cameraBasisVector
 @export var accel = 90.0
 ## How fast you slow down
 @export var deaccel = 80.0
-## Player reactivity percentage, regarding suggently picking a different direction
-#@export var reactivityPercent = 0.5
-## Threshhold that's considered a sharp turn
-#@export var sharp_turn_threshold = 140.0
 ## How fast you turn
 @export var TURN_SPEED = 140
 ## How fast you run
@@ -47,7 +41,6 @@ func _ready():
 	
 	cameraBasisVector = player.level_camera.get_global_transform().basis
 	mesh = player.model
-	mesh_xform = mesh.get_transform()
 	
 	parent_module = player.movement_module
 
@@ -75,6 +68,7 @@ func _calculateFloorMovement( delta, dir ):
 	var oppositionPercent = newAngle/180
 	
 	if dir.length() > 0:
+		movement_dir = dir
 		if hspeed > 0.001:
 			hdir = parent_module.adjust_facing(
 				hdir, 
@@ -88,7 +82,6 @@ func _calculateFloorMovement( delta, dir ):
 		
 		if hspeed < max_speed:
 			hspeed += ( accel + (accel * oppositionPercent) ) * delta
-#			hspeed += accel * delta
 		else:
 			hspeed -= ( deaccel * delta ) * max_speed_deaccel_multiplier
 	else:
@@ -96,21 +89,10 @@ func _calculateFloorMovement( delta, dir ):
 		if hspeed < 0:
 			hspeed = 0
 	
+	var facing = movement_dir
+	facing.y = 0
+	mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
+	
 	hv.x = hdir.x * hspeed
 	hv.z = hdir.z * hspeed
 	
-	var facing_mesh = mesh_xform.basis[0].normalized()
-	facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
-
-	if hspeed > 0:
-		facing_mesh = parent_module.adjust_facing(
-			facing_mesh, 
-			dir, 
-			delta, 
-			1.0 / hspeed * TURN_SPEED, 
-			Vector3.UP
-		)
-#	movement_dir = facing_mesh
-	var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
-
-	mesh.set_transform(Transform3D(m3, mesh_xform.origin))

@@ -8,8 +8,6 @@ var parent_module
 var player
 ## Player Mesh
 var mesh
-## Player Mesh Transform
-var mesh_xform
 ## Scale value for the model
 var CHAR_SCALE
 ## Vector for the Level Camera
@@ -21,14 +19,12 @@ var cameraBasisVector
 @export var accel = 90.0
 ## How fast you slow down
 @export var deaccel = 22.5
-## Player reactivity percentage, regarding suggently picking a different direction
-#@export var reactivityPercent = 0.5
-## Threshhold that's considered a sharp turn
-#@export var sharp_turn_threshold = 140.0
 ## How fast you turn
 @export var TURN_SPEED = 140
 ## How fast you run
 @export var max_speed = 12.0
+## Whether or not your character changes the direction they face while in the air
+@export var update_facing = true
 
 var vv
 
@@ -40,7 +36,6 @@ func _ready():
 
 	cameraBasisVector = player.level_camera.get_global_transform().basis
 	mesh = player.model
-	mesh_xform = mesh.get_transform()
 	
 	vv = 0
 	
@@ -63,7 +58,7 @@ func process_movement(delta: float, linear_velocity: Vector3, dir: Vector3):
 
 	return linear_velocity
 
-func _calculateAerialMovement( delta, dir, update_facing = true ):
+func _calculateAerialMovement( delta, dir ):
 	var ground_module = parent_module.ground_movement
 	
 	var newAngle = rad_to_deg(ground_module.hdir.angle_to(dir))
@@ -91,21 +86,11 @@ func _calculateAerialMovement( delta, dir, update_facing = true ):
 				ground_module.hspeed = 0
 
 	if update_facing:
-		var facing_mesh = -mesh_xform.basis[0].normalized()
-		facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
-
-		if ground_module.hspeed > 0:
-			facing_mesh = parent_module.adjust_facing(
-				facing_mesh, 
-				dir, 
-				delta, 
-				1.0 / ground_module.hspeed * TURN_SPEED, 
-				Vector3.UP
-			)
-		ground_module.movement_dir = facing_mesh
-		var m3 = Basis(-facing_mesh, Vector3.UP, -facing_mesh.cross(Vector3.UP).normalized())
-
-		mesh.set_transform(Transform3D(m3, mesh_xform.origin))
+		ground_module.movement_dir = dir
+	
+	var facing = ground_module.movement_dir
+	facing.y = 0
+	mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
 	
 	ground_module.hv.x = ground_module.hdir.x * ground_module.hspeed
 	ground_module.hv.z = ground_module.hdir.z * ground_module.hspeed
