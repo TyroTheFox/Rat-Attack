@@ -1,5 +1,5 @@
 extends CharacterBody3D
-class_name Player
+class_name Enemy
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -12,16 +12,18 @@ var level_camera: Camera3D
 var state_machine: StateMachine
 
 ## Movement Module
-var movement_module: Player_Movement
+var movement_module: Enemy_Movement
 ## Timer used to measure Coyote Time, a grace period where the player can still jump after falling off a ledge
 var coyote_time: Timer
+
+## Nav Mesh Navigation Agent Instance
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 
 ## Sets up player variables
 func _ready():
 	model = $model
 	state_machine = $state_machine
 	movement_module = $modules/movement
-	coyote_time = $coyote_time
 
 func _physics_process(delta):
 	move_and_slide()

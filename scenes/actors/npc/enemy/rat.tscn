@@ -1,0 +1,59 @@
+[gd_scene load_steps=12 format=3 uid="uid://bci8xaqrahrq0"]
+
+[ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="1_bgshn"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_klpke"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/es_idle.gd" id="2_hxoar"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/es_ground.gd" id="3_mydxa"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy_movement.gd" id="4_dyyka"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_ground.gd" id="5_hg3wj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w88a2"]
+albedo_color = Color(0.976471, 0, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_2wt8d"]
+material = SubResource("StandardMaterial3D_w88a2")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gak2h"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cfthd"]
+material = SubResource("StandardMaterial3D_gak2h")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r1rx7"]
+size = Vector3(1, 1.98367, 1)
+
+[node name="rat" type="CharacterBody3D"]
+script = ExtResource("1_klpke")
+
+[node name="model" type="Node3D" parent="."]
+
+[node name="mesh" type="MeshInstance3D" parent="model"]
+mesh = SubResource("CapsuleMesh_2wt8d")
+
+[node name="meshbox" type="MeshInstance3D" parent="model/mesh"]
+transform = Transform3D(0.406248, 0, 0, 0, 1, 0, 0, 0, 0.327678, 0, 0.0128009, 0.48472)
+mesh = SubResource("BoxMesh_cfthd")
+skeleton = NodePath("../..")
+
+[node name="collision_box" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_r1rx7")
+
+[node name="state_machine" type="Node" parent="."]
+script = ExtResource("1_bgshn")
+initial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="state_machine"]
+script = ExtResource("2_hxoar")
+
+[node name="ground" type="Node" parent="state_machine"]
+script = ExtResource("3_mydxa")
+
+[node name="modules" type="Node" parent="."]
+
+[node name="movement" type="Node" parent="modules"]
+script = ExtResource("4_dyyka")
+
+[node name="ground_movement" type="Node" parent="modules/movement"]
+script = ExtResource("5_hg3wj")
+movement_speed = 10.0
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
