@@ -4,7 +4,6 @@ class_name ps_In_Air_Coyote_Time
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func s_physics_update(delta):
 	var movement_module_node = player.movement_module
-	var in_air_movement = movement_module_node.air_movement
 	var coyote_timer = player.coyote_time
 	
 	if player.is_on_floor():

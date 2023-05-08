@@ -89,9 +89,10 @@ func _calculateFloorMovement( delta, dir ):
 		if hspeed < 0:
 			hspeed = 0
 	
-	var facing = movement_dir
-	facing.y = 0
-	mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
+	if dir.length() > 0:
+		var facing = movement_dir
+		facing.y = 0
+		mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
 	
 	hv.x = hdir.x * hspeed
 	hv.z = hdir.z * hspeed

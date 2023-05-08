@@ -1,5 +1,5 @@
 extends Node
-class_name m_Enemy_Ground_Movement
+class_name m_Enemy_Air_Movement
 
 ## Parent Module
 var parent_module
@@ -26,8 +26,11 @@ func _ready():
 	
 	parent_module = enemy.movement_module
 
+# Called every frame. 'delta' is the elapsed time since the previous frame.
 ## Handle movment
 func process_movement(_delta: float, linear_velocity: Vector3):
+	var gravity = parent_module.gravity
+	
 	var navigation_agent = parent_module.navigation_agent
 	if navigation_agent.is_navigation_finished():
 		return linear_velocity
@@ -41,7 +44,7 @@ func process_movement(_delta: float, linear_velocity: Vector3):
 	movement_dir = new_velocity
 	
 	linear_velocity.x = new_velocity.x * movement_speed
-	linear_velocity.y = 0
+	linear_velocity.y = -parent_module.gravity
 	linear_velocity.z = new_velocity.z * movement_speed
 	
 	if linear_velocity.length() > 0:

@@ -4,6 +4,8 @@ class_name Enemy_Movement
 # Movement Modules
 ## Ground Movement Module
 var ground_movement: m_Enemy_Ground_Movement
+## In-Air Movement Module
+var in_air_movement: m_Enemy_Air_Movement
 
 ## Enemy Gravity
 var gravity
@@ -23,7 +25,11 @@ func _ready():
 	enemy = owner as Enemy
 	assert(enemy != null)
 
+	gravity = enemy.gravity
+
 	ground_movement = $ground_movement
+	in_air_movement = $air_movement
+	
 	navigation_agent = enemy.navigation_agent
 	movement_target_position = enemy.global_transform.origin
 	

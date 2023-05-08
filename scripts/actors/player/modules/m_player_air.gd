@@ -88,9 +88,10 @@ func _calculateAerialMovement( delta, dir ):
 	if update_facing:
 		ground_module.movement_dir = dir
 	
-	var facing = ground_module.movement_dir
-	facing.y = 0
-	mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
+	if dir.length() > 0:
+		var facing = ground_module.movement_dir
+		facing.y = 0
+		mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
 	
 	ground_module.hv.x = ground_module.hdir.x * ground_module.hspeed
 	ground_module.hv.z = ground_module.hdir.z * ground_module.hspeed

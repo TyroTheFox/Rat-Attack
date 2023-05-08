@@ -4,7 +4,6 @@ class_name ps_Ground
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func s_physics_update(delta):
 	var movement_module_node = player.movement_module
-	var ground_movement = movement_module_node.ground_movement
 	var coyote_timer = player.coyote_time
 	
 	# Add the gravity.

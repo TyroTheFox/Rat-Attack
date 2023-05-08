@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RatData" load_steps=2 format=3 uid="uid://1e8a0ady6trv"]
+
+[ext_resource type="Script" path="res://scripts/scenes/npc_ai/rat_data.gd" id="1_rnju6"]
+
+[resource]
+resource_name = "base_rat"
+script = ExtResource("1_rnju6")
+name = "base_rat"
+display_name = "Rat"
+scene_path = "res://scenes/actors/npc/enemy/e_rat.tscn"
+rarity = 4
