@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://3uscuriq02fo"]
+
+[ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_destructable.gd" id="1_blnnh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_unoi0"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dpyh"]
+material = SubResource("StandardMaterial3D_unoi0")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2mpxb"]
+
+[node name="Test Furnature" type="Node3D"]
+
+[node name="SC_Destructable" type="Node" parent="."]
+script = ExtResource("1_blnnh")
+MaxHP = 5
+
+[node name="block" type="MeshInstance3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+mesh = SubResource("BoxMesh_7dpyh")
+skeleton = NodePath("../../../..")
+
+[node name="block_collider" type="StaticBody3D" parent="block"]
+
+[node name="block_shape" type="CollisionShape3D" parent="block/block_collider"]
+shape = SubResource("BoxShape3D_2mpxb")
+
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="block"]

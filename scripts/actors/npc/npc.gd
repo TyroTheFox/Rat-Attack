@@ -8,13 +8,16 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var model
 ## Camera the player object is handed
 var level_camera: Camera3D
-## Player State Machine
-var state_machine: StateMachine
+## State Machine for Movement
+var state_machine_movement: StateMachine
+## State Machine for Actions
+var state_machine_actions: StateMachine
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	model = $model
-	state_machine = $state_machine
+	state_machine_movement = $state_machine_movement
+	state_machine_actions = $state_machine_actions
 
 func _physics_process(_delta):
 	move_and_slide()

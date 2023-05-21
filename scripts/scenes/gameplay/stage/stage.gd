@@ -40,6 +40,8 @@ func _ready():
 	if (enemy_spawn_points.size() == 0): 
 		enemy_spawn_points.push_back(Vector3(0, 0, 0))
 	
+	rat_director.start()
+	
 	spawn_players()
 
 func spawn_players():

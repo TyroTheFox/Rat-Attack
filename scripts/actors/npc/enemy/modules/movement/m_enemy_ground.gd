@@ -28,8 +28,12 @@ func _ready():
 
 ## Handle movment
 func process_movement(_delta: float, linear_velocity: Vector3):
-	var navigation_agent = parent_module.navigation_agent
-	if navigation_agent.is_navigation_finished():
+	var navigation_agent: NavigationAgent3D = parent_module.navigation_agent
+	if navigation_agent.is_target_reached():
+		linear_velocity.x = 0
+		linear_velocity.y = 0
+		linear_velocity.z = 0
+	
 		return linear_velocity
 
 	var current_agent_position: Vector3 = enemy.global_transform.origin

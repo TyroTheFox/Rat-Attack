@@ -40,6 +40,15 @@ func set_movement_target(movement_target: Vector3):
 	movement_target_position = movement_target
 	navigation_agent.set_target_position(movement_target)
 
+func distance_to_target():
+	return navigation_agent.distance_to_target()
+
+func is_navigation_finished():
+	return navigation_agent.is_navigation_finished()
+
+func is_target_reached():
+	return navigation_agent.is_target_reached()
+
 func actor_setup():
 	# Wait for the first physics frame so the NavigationServer can sync.
 	await get_tree().physics_frame

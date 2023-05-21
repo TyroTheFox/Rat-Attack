@@ -1,11 +1,14 @@
-[gd_scene load_steps=14 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=17 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="2_80xdb"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/es_idle.gd" id="3_v2rey"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/es_ground.gd" id="4_b7e0p"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/es_in_air.gd" id="5_c5ti0"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_do_nothing.gd" id="3_bo2v2"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_idle.gd" id="3_cidi5"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_ground.gd" id="4_bksws"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_hurt_destructable.gd" id="4_mfc76"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_in_air.gd" id="5_h66b2"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy_movement.gd" id="6_dnh4y"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/base_rat_behaviour/es_pick_destroyable_target.gd" id="6_eysx4"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_ground.gd" id="7_8huiu"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_air.gd" id="8_fv4rt"]
 
@@ -40,18 +43,32 @@ skeleton = NodePath("../..")
 [node name="collision_box" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_r1rx7")
 
-[node name="state_machine" type="Node" parent="."]
+[node name="state_machine_actions" type="Node" parent="."]
 script = ExtResource("2_80xdb")
-initial_state = NodePath("idle")
+initial_state = NodePath("do_nothing_till_idle")
 
-[node name="idle" type="Node" parent="state_machine"]
-script = ExtResource("3_v2rey")
+[node name="do_nothing_till_idle" type="Node" parent="state_machine_actions"]
+script = ExtResource("3_bo2v2")
+action_state_to_transition_to = "hurt_destructable"
 
-[node name="ground" type="Node" parent="state_machine"]
-script = ExtResource("4_b7e0p")
+[node name="hurt_destructable" type="Node" parent="state_machine_actions"]
+script = ExtResource("4_mfc76")
 
-[node name="in_air" type="Node" parent="state_machine"]
-script = ExtResource("5_c5ti0")
+[node name="state_machine_movement" type="Node" parent="."]
+script = ExtResource("2_80xdb")
+initial_state = NodePath("pick_target")
+
+[node name="idle" type="Node" parent="state_machine_movement"]
+script = ExtResource("3_cidi5")
+
+[node name="ground" type="Node" parent="state_machine_movement"]
+script = ExtResource("4_bksws")
+
+[node name="in_air" type="Node" parent="state_machine_movement"]
+script = ExtResource("5_h66b2")
+
+[node name="pick_target" type="Node" parent="state_machine_movement"]
+script = ExtResource("6_eysx4")
 
 [node name="modules" type="Node" parent="."]
 
@@ -66,3 +83,15 @@ movement_speed = 10.0
 script = ExtResource("8_fv4rt")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 4.0
+target_desired_distance = 6.0
+path_max_distance = 7.01
+avoidance_enabled = true
+radius = 5.0
+debug_enabled = true
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 0, 1)
+debug_path_custom_point_size = 11.41
+
+[node name="make_attack" type="Timer" parent="."]
+wait_time = 5.0

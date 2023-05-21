@@ -13,8 +13,13 @@ var spawn_node: Node
 var spawn_queue: Array[int]
 var spawn_wait_time = 10.0
 var unique_spawned_rats: Array[int]
+var id_count = 0
 
-var _active = true
+var destructable_objects: Array[SC_Destructable]
+
+var active = true : 
+	get:
+		return active
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,20 +34,31 @@ func _ready():
 	spawn_timer = Timer.new();
 	add_child(spawn_timer)
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
-	spawn_timer.start(spawn_wait_time)
 
 func start():
-	_active = true
+	for node in get_tree().get_nodes_in_group('destructable'):
+		destructable_objects.push_back(node)
+		(node as SC_Destructable).id = id_count
+		id_count += 1
+	
+	active = true
 	spawn_timer.start(spawn_wait_time)
 
 func stop():
-	_active = false
+	active = false
 	spawn_timer.stop()
 
 func spawn_enemy(enemy: PackedScene, spawn_point: Vector3):
 	var new_enemy = enemy.instantiate() as Enemy;
+	
+	new_enemy.rat_director = self
 	spawn_node.add_child(new_enemy)
 	new_enemy.translate(spawn_point)
+
+func select_destructable_target() -> SC_Destructable:
+	var random_destructable = destructable_objects[randi() % destructable_objects.size()]
+	
+	return random_destructable
 
 func generate_spawn_list():
 	for i in range(0, rat_list.size()):
@@ -54,10 +70,7 @@ func generate_spawn_list():
 		for j in range(0, rat_data.rarity):
 			spawn_queue.push_back(i)
 
-func _on_spawn_timer_timeout():
-	if not _active:
-		return
-	
+func prepare_to_spawn_enemy():
 	if spawn_queue.size() == 0:
 		generate_spawn_list()
 	
@@ -78,3 +91,15 @@ func _on_spawn_timer_timeout():
 	
 	spawn_enemy(enemy_data.scene, rand_spawn_point)
 	spawn_timer.start(spawn_wait_time)
+
+func _on_destructable_detroyed(id: int):
+	var destructable = destructable_objects.filter(func(object: SC_Destructable): return object.id == id)
+	
+	if destructable.size() > 0:
+		destructable_objects.erase(destructable[0])
+
+func _on_spawn_timer_timeout():
+	if not active:
+		return
+	
+	prepare_to_spawn_enemy()
