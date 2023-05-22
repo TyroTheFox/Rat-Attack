@@ -40,6 +40,7 @@ func start():
 		destructable_objects.push_back(node)
 		(node as SC_Destructable).id = id_count
 		id_count += 1
+		(node as SC_Destructable).connect('destroyed', _on_destructable_detroyed)
 	
 	active = true
 	spawn_timer.start(spawn_wait_time)
@@ -96,6 +97,7 @@ func _on_destructable_detroyed(id: int):
 	var destructable = destructable_objects.filter(func(object: SC_Destructable): return object.id == id)
 	
 	if destructable.size() > 0:
+		(destructable[0] as SC_Destructable).connect('destroyed', _on_destructable_detroyed)
 		destructable_objects.erase(destructable[0])
 
 func _on_spawn_timer_timeout():

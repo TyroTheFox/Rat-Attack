@@ -31,6 +31,7 @@ func deal_damage(damage_value: int):
 	damage_taken.emit(id, damage_value, HP)
 	
 	if HP <= 0:
+		get_parent().visible = false
 		destroyed.emit(id)
 
 func reset():
