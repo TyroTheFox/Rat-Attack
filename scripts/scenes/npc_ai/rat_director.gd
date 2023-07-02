@@ -37,10 +37,12 @@ func _ready():
 
 func start():
 	for node in get_tree().get_nodes_in_group('destructable'):
-		destructable_objects.push_back(node)
-		(node as SC_Destructable).id = id_count
-		id_count += 1
-		(node as SC_Destructable).connect('destroyed', _on_destructable_detroyed)
+		var destructable_component = node.find_child('SC_Destructable', true)
+		if (destructable_component):
+			destructable_objects.push_back(destructable_component)
+			destructable_component.id = id_count
+			id_count += 1
+			destructable_component.connect('destroyed', _on_destructable_detroyed)
 	
 	active = true
 	spawn_timer.start(spawn_wait_time)
@@ -57,7 +59,8 @@ func spawn_enemy(enemy: PackedScene, spawn_point: Vector3):
 	new_enemy.translate(spawn_point)
 
 func select_destructable_target() -> SC_Destructable:
-	var random_destructable = destructable_objects[randi() % destructable_objects.size()]
+	var random_index = randi() % destructable_objects.size()
+	var random_destructable = destructable_objects[random_index]
 	
 	return random_destructable
 

@@ -1,4 +1,4 @@
-extends Node
+extends Stage_Component
 class_name SC_Destructable
 
 signal damage_taken(id, damage_value, current_HP)
@@ -13,14 +13,24 @@ var id = -1 :
 		id = new_id
 
 var HP = 0
+var position: Vector3
+
+var has_gathering_area_component: SC_Has_Gathering_Area
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	super._ready()
 	HP = MaxHP
-	add_to_group('destructable')
+	var base_node = get_owner()
+	base_node.add_to_group('destructable')
+	position = get_parent().position
+	has_gathering_area_component = $SC_Has_Gathering_Area
 
 func get_position():
-	return get_parent().position
+	if (has_gathering_area_component):
+		return has_gathering_area_component.get_random_position_within_area()
+	else:
+		return get_parent().global_position
 
 func is_destroyed():
 	return HP <= 0

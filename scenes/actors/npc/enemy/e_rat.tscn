@@ -28,6 +28,7 @@ size = Vector3(1, 1.98367, 1)
 
 [node name="rat" type="CharacterBody3D"]
 axis_lock_angular_x = true
+axis_lock_angular_z = true
 script = ExtResource("1_d3htw")
 
 [node name="model" type="Node3D" parent="."]
@@ -84,10 +85,9 @@ script = ExtResource("8_fv4rt")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 4.0
-target_desired_distance = 6.0
+target_desired_distance = 4.0
 path_max_distance = 7.01
 avoidance_enabled = true
-radius = 5.0
 debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)

@@ -1,9 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://3uscuriq02fo"]
+[gd_scene load_steps=9 format=3 uid="uid://3uscuriq02fo"]
 
 [ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_destructable.gd" id="1_blnnh"]
+[ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_has_gathering_area.gd" id="2_to88c"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lr3ro"]
+height = 1.64262
+radius = 5.48147
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_142vs"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_ryr3h"]
+material = SubResource("StandardMaterial3D_142vs")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_unoi0"]
-albedo_color = Color(1, 0, 0, 1)
+albedo_color = Color(0, 0, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_7dpyh"]
 material = SubResource("StandardMaterial3D_unoi0")
@@ -15,6 +26,24 @@ material = SubResource("StandardMaterial3D_unoi0")
 [node name="SC_Destructable" type="Node" parent="."]
 script = ExtResource("1_blnnh")
 MaxHP = 5
+
+[node name="SC_Has_Gathering_Area" type="Node" parent="SC_Destructable"]
+script = ExtResource("2_to88c")
+variance_angle = 140.0
+
+[node name="raycast" type="RayCast3D" parent="SC_Destructable/SC_Has_Gathering_Area"]
+target_position = Vector3(0, 0, 12)
+debug_shape_custom_color = Color(0, 1, 0, 1)
+debug_shape_thickness = 5
+
+[node name="gathering_area" type="Area3D" parent="SC_Destructable/SC_Has_Gathering_Area"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.68433, 0)
+
+[node name="area_shape" type="CollisionShape3D" parent="SC_Destructable/SC_Has_Gathering_Area/gathering_area"]
+shape = SubResource("CylinderShape3D_lr3ro")
+
+[node name="debug_block" type="MeshInstance3D" parent="SC_Destructable/SC_Has_Gathering_Area"]
+mesh = SubResource("SphereMesh_ryr3h")
 
 [node name="block" type="MeshInstance3D" parent="."]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
