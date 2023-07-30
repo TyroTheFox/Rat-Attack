@@ -31,7 +31,7 @@ func _ready():
 	in_air_movement = $air_movement
 	
 	navigation_agent = enemy.navigation_agent
-	movement_target_position = enemy.global_transform.origin
+	movement_target_position = enemy.position
 	
 	# Make sure to not await during _ready.
 	call_deferred("actor_setup")

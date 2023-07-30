@@ -30,7 +30,7 @@ func get_position():
 	if (has_gathering_area_component):
 		return has_gathering_area_component.get_random_position_within_area()
 	else:
-		return get_parent().global_position
+		return get_parent().position
 
 func is_destroyed():
 	return HP <= 0

@@ -36,7 +36,7 @@ func process_movement(_delta: float, linear_velocity: Vector3):
 	
 		return linear_velocity
 
-	var current_agent_position: Vector3 = enemy.global_transform.origin
+	var current_agent_position: Vector3 = enemy.position
 	var next_path_position: Vector3 = navigation_agent.get_next_path_position()
 
 	var new_velocity: Vector3 = next_path_position - current_agent_position
