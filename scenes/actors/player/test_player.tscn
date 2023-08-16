@@ -1,15 +1,18 @@
-[gd_scene load_steps=15 format=3 uid="uid://bvlifur6woann"]
+[gd_scene load_steps=18 format=3 uid="uid://b6wdlxxdj788n"]
 
 [ext_resource type="Script" path="res://scripts/actors/player/player.gd" id="1_427t1"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="1_wo1xs"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/ps_ground.gd" id="3_rowm6"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_ground.gd" id="3_41yy3"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/actions/ps_idle.gd" id="3_wr56u"]
 [ext_resource type="Script" path="res://scripts/actors/player/player_movement.gd" id="4_3yoex"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_ground.gd" id="4_k440i"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/ps_jumping.gd" id="4_u23o6"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/ps_in_air.gd" id="5_ac5n7"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/ps_in_air_coyote_time.gd" id="6_e6k3i"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_air.gd" id="6_fsg8v"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/m_player_jump.gd" id="9_x01eq"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/actions/ps_attack.gd" id="4_16xqv"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_jumping.gd" id="4_o107l"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air.gd" id="5_jgij0"]
+[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air_coyote_time.gd" id="6_mibhb"]
+[ext_resource type="Script" path="res://scripts/actors/player/player_actions.gd" id="8_y0an7"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_ground.gd" id="9_qj60t"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_air.gd" id="10_w7pqr"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_jump.gd" id="11_sxcrd"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_x0y5c"]
 
@@ -24,6 +27,7 @@ size = Vector3(1, 1.98367, 1)
 
 [node name="player" type="CharacterBody3D" groups=["player"]]
 disable_mode = 1
+collision_mask = 7
 axis_lock_angular_x = true
 platform_wall_layers = 1
 script = ExtResource("1_427t1")
@@ -45,38 +49,55 @@ skeleton = NodePath("../..")
 [node name="collision_box" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_mptt7")
 
-[node name="state_machine" type="Node" parent="."]
+[node name="state_machine_action" type="Node" parent="."]
+script = ExtResource("1_wo1xs")
+initial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="state_machine_action"]
+script = ExtResource("3_wr56u")
+
+[node name="attack" type="Node" parent="state_machine_action"]
+script = ExtResource("4_16xqv")
+
+[node name="state_machine_movement" type="Node" parent="."]
 script = ExtResource("1_wo1xs")
 initial_state = NodePath("ground")
 
-[node name="ground" type="Node" parent="state_machine"]
-script = ExtResource("3_rowm6")
+[node name="ground" type="Node" parent="state_machine_movement"]
+script = ExtResource("3_41yy3")
 
-[node name="jumping" type="Node" parent="state_machine"]
-script = ExtResource("4_u23o6")
+[node name="jumping" type="Node" parent="state_machine_movement"]
+script = ExtResource("4_o107l")
 
-[node name="in_air" type="Node" parent="state_machine"]
-script = ExtResource("5_ac5n7")
+[node name="in_air" type="Node" parent="state_machine_movement"]
+script = ExtResource("5_jgij0")
 
-[node name="in_air_coyote_time" type="Node" parent="state_machine"]
-script = ExtResource("6_e6k3i")
+[node name="in_air_coyote_time" type="Node" parent="state_machine_movement"]
+script = ExtResource("6_mibhb")
 
 [node name="modules" type="Node" parent="."]
 
+[node name="actions" type="Node" parent="modules"]
+script = ExtResource("8_y0an7")
+
 [node name="movement" type="Node" parent="modules"]
 script = ExtResource("4_3yoex")
+key_bind_left = null
+key_bind_right = null
+key_bind_up = null
+key_bind_down = null
 
 [node name="ground_movement" type="Node" parent="modules/movement"]
-script = ExtResource("4_k440i")
+script = ExtResource("9_qj60t")
 TURN_SPEED = 500
 
 [node name="air_movement" type="Node" parent="modules/movement"]
-script = ExtResource("6_fsg8v")
+script = ExtResource("10_w7pqr")
 accel = 22.5
 deaccel = 180.0
 TURN_SPEED = 500
 
 [node name="jump_movement" type="Node" parent="modules/movement"]
-script = ExtResource("9_x01eq")
+script = ExtResource("11_sxcrd")
 jump_height = 5.0
 jump_time = 6.0

@@ -3,7 +3,7 @@ class_name ps_Jumping
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func s_physics_update(delta):
-	var jump_movement: m_Player_Jump_Movement = player.movement_module.jump_movement
+	var jump_movement: m_Player_Jump = player.movement_module.jump_movement
 	var air_movement: m_Player_Air_Movement = player.movement_module.air_movement
 
 	# Get the input direction and handle the movement/deceleration.

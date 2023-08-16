@@ -52,5 +52,7 @@ func process_movement(_delta: float, linear_velocity: Vector3):
 		var facing = movement_dir
 		facing.y = 0
 		mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
+		mesh.rotation.x = 0
+		mesh.rotation.z = 0
 	
 	return linear_velocity

@@ -1,5 +1,5 @@
 extends Node
-class_name m_Player_Jump_Movement
+class_name m_Player_Jump
 
 ## Parent Module
 var parent_module

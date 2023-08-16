@@ -3,14 +3,6 @@
 [ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_destructable.gd" id="1_blnnh"]
 [ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_has_gathering_area.gd" id="2_to88c"]
 
-[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_syk7s"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_anp6w"]
-albedo_color = Color(1, 0, 0, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_mpr73"]
-material = SubResource("StandardMaterial3D_anp6w")
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_unoi0"]
 albedo_color = Color(0, 0, 1, 1)
 
@@ -19,24 +11,25 @@ material = SubResource("StandardMaterial3D_unoi0")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2mpxb"]
 
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_syk7s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_anp6w"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mpr73"]
+material = SubResource("StandardMaterial3D_anp6w")
+
 [node name="Test Furnature" type="Node3D"]
 
 [node name="SC_Destructable" type="Node" parent="."]
 script = ExtResource("1_blnnh")
-MaxHP = 5000000
+MaxHP = 5
 
 [node name="SC_Has_Gathering_Area" type="Node" parent="SC_Destructable"]
 script = ExtResource("2_to88c")
-
-[node name="spring_arm" type="SpringArm3D" parent="SC_Destructable/SC_Has_Gathering_Area"]
-shape = SubResource("SeparationRayShape3D_syk7s")
-
-[node name="gathering_point" type="Marker3D" parent="SC_Destructable/SC_Has_Gathering_Area/spring_arm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-gizmo_extents = 10.0
-
-[node name="debug_block" type="MeshInstance3D" parent="SC_Destructable/SC_Has_Gathering_Area/spring_arm/gathering_point"]
-mesh = SubResource("BoxMesh_mpr73")
+angle_variance = 50
+spring_arm_path = NodePath("../../spring_arm")
+gathering_point_path = NodePath("../../spring_arm/gathering_point")
 
 [node name="block" type="MeshInstance3D" parent="."]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
@@ -44,8 +37,21 @@ mesh = SubResource("BoxMesh_7dpyh")
 skeleton = NodePath("../../../..")
 
 [node name="block_collider" type="StaticBody3D" parent="block"]
+collision_layer = 4
+collision_mask = 7
 
 [node name="block_shape" type="CollisionShape3D" parent="block/block_collider"]
 shape = SubResource("BoxShape3D_2mpxb")
 
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="block"]
+radius = 0.5
+
+[node name="spring_arm" type="SpringArm3D" parent="."]
+shape = SubResource("SeparationRayShape3D_syk7s")
+
+[node name="gathering_point" type="Marker3D" parent="spring_arm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+gizmo_extents = 10.0
+
+[node name="debug_block" type="MeshInstance3D" parent="spring_arm/gathering_point"]
+mesh = SubResource("BoxMesh_mpr73")

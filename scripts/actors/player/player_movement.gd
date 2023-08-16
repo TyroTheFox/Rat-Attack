@@ -17,7 +17,7 @@ var ground_movement: m_Player_Ground_Movement
 ## In-Air Movement Module
 var air_movement: m_Player_Air_Movement
 ## Jump Movement Module
-var jump_movement: m_Player_Jump_Movement
+var jump_movement: m_Player_Jump
 
 ## Player Gravity
 var gravity

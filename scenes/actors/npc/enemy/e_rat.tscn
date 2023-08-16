@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=19 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="2_80xdb"]
@@ -18,15 +18,23 @@ albedo_color = Color(0.976471, 0, 0, 1)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_2wt8d"]
 material = SubResource("StandardMaterial3D_w88a2")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gak2h"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4otqh"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_cfthd"]
-material = SubResource("StandardMaterial3D_gak2h")
+material = SubResource("StandardMaterial3D_4otqh")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_r1rx7"]
-size = Vector3(1, 1.98367, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w1mq1"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_h8x26"]
+material = SubResource("StandardMaterial3D_w1mq1")
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ao6hc"]
+radius = 0.25
 
 [node name="rat" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 7
 axis_lock_angular_x = true
 axis_lock_angular_z = true
 script = ExtResource("1_d3htw")
@@ -41,8 +49,13 @@ transform = Transform3D(0.406248, 0, 0, 0, 1, 0, 0, 0, 0.327678, 0, 0.0128009, 0
 mesh = SubResource("BoxMesh_cfthd")
 skeleton = NodePath("../..")
 
+[node name="meshbox2" type="MeshInstance3D" parent="model/mesh"]
+transform = Transform3D(0.406248, 0, 0, 0, 1, 0, 0, 0, 0.327678, 0, 1.63811, 0.0139558)
+mesh = SubResource("BoxMesh_h8x26")
+skeleton = NodePath("../meshbox")
+
 [node name="collision_box" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_r1rx7")
+shape = SubResource("CylinderShape3D_ao6hc")
 
 [node name="state_machine_actions" type="Node" parent="."]
 script = ExtResource("2_80xdb")
@@ -61,9 +74,11 @@ initial_state = NodePath("pick_target")
 
 [node name="idle" type="Node" parent="state_machine_movement"]
 script = ExtResource("3_cidi5")
+meshbox = NodePath("../../model/mesh/meshbox2")
 
 [node name="ground" type="Node" parent="state_machine_movement"]
 script = ExtResource("4_bksws")
+meshbox = NodePath("../../model/mesh/meshbox2")
 
 [node name="in_air" type="Node" parent="state_machine_movement"]
 script = ExtResource("5_h66b2")
@@ -84,10 +99,10 @@ movement_speed = 10.0
 script = ExtResource("8_fv4rt")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_desired_distance = 4.0
-target_desired_distance = 4.0
-path_max_distance = 7.01
+target_desired_distance = 3.0
+path_max_distance = 3.01
 avoidance_enabled = true
+radius = 5.0
 debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)

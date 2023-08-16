@@ -10,6 +10,8 @@ var model
 var level_camera: Camera3D
 ## Player State Machine
 var state_machine: StateMachine
+## Player Action State Machine
+var action_state_machine: StateMachine
 
 ## Movement Module
 var movement_module: Player_Movement
@@ -19,7 +21,8 @@ var coyote_time: Timer
 ## Sets up player variables
 func _ready():
 	model = $model
-	state_machine = $state_machine
+	state_machine = $state_machine_movement
+	action_state_machine = $state
 	movement_module = $modules/movement
 	coyote_time = $coyote_time
 
