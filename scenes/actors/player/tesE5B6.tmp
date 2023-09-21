@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://scripts/actors/player/player.gd" id="1_427t1"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="1_wo1xs"]
 [ext_resource type="Script" path="res://scripts/structure/interaction/player_action_handler/player_action_handler.gd" id="2_jf6fl"]
-[ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hitBox.gd" id="2_rehvc"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_ground.gd" id="3_41yy3"]
 [ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_attack.gd" id="3_87aoj"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/actions/ps_idle.gd" id="3_wr56u"]
@@ -13,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_jump.gd" id="5_b4l1x"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air.gd" id="5_jgij0"]
 [ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air_coyote_time.gd" id="6_mibhb"]
+[ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hurtBox.gd" id="7_e35ec"]
 [ext_resource type="Script" path="res://scripts/actors/player/player_actions.gd" id="8_y0an7"]
 [ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_ground.gd" id="9_qj60t"]
 [ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_air.gd" id="10_w7pqr"]
@@ -33,8 +33,7 @@ material = SubResource("StandardMaterial3D_ti36y")
 radius = 2.20954
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qpuyb"]
-transparency = 1
-albedo_color = Color(1, 0, 0, 0.12549)
+albedo_color = Color(1, 0, 0, 0.027451)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_e84ae"]
 material = SubResource("StandardMaterial3D_qpuyb")
@@ -67,15 +66,14 @@ skeleton = NodePath("../..")
 
 [node name="interaction_areas" type="Node3D" parent="."]
 
-[node name="attack_hitbox" type="Area3D" parent="interaction_areas"]
+[node name="attack_hurtbox" type="Area3D" parent="interaction_areas"]
 visible = false
-script = ExtResource("2_rehvc")
-damage = 1.0
+script = ExtResource("7_e35ec")
 
-[node name="shape" type="CollisionShape3D" parent="interaction_areas/attack_hitbox"]
+[node name="shape" type="CollisionShape3D" parent="interaction_areas/attack_hurtbox"]
 shape = SubResource("CylinderShape3D_dv77c")
 
-[node name="debug" type="MeshInstance3D" parent="interaction_areas/attack_hitbox"]
+[node name="debug" type="MeshInstance3D" parent="interaction_areas/attack_hurtbox"]
 mesh = SubResource("CylinderMesh_e84ae")
 
 [node name="player_actions" type="Node" parent="."]
@@ -83,29 +81,28 @@ script = ExtResource("2_jf6fl")
 
 [node name="p_attack" type="Node" parent="player_actions"]
 
-[node name="pam_Attack" type="Node" parent="player_actions/p_attack"]
+[node name="Player_Action_Module_Attack" type="Node" parent="player_actions/p_attack"]
 script = ExtResource("3_87aoj")
 
 [node name="p_capture" type="Node" parent="player_actions"]
 
 [node name="p_jump" type="Node" parent="player_actions"]
 
-[node name="pam_Jump" type="Node" parent="player_actions/p_jump"]
+[node name="Player_Action_Module_Jump" type="Node" parent="player_actions/p_jump"]
 script = ExtResource("5_b4l1x")
 
-[node name="state_machine_actions" type="Node" parent="."]
+[node name="state_machine_action" type="Node" parent="."]
 script = ExtResource("1_wo1xs")
 initial_state = NodePath("idle")
 
-[node name="idle" type="Node" parent="state_machine_actions"]
+[node name="idle" type="Node" parent="state_machine_action"]
 script = ExtResource("3_wr56u")
 
-[node name="attack" type="Node" parent="state_machine_actions"]
+[node name="attack" type="Node" parent="state_machine_action"]
 script = ExtResource("4_16xqv")
-hitbox_path = NodePath("../../interaction_areas/attack_hitbox")
+hurtbox_path = NodePath("../../interaction_areas/attack_hurtbox")
 
-[node name="attack_duration" type="Timer" parent="state_machine_actions/attack"]
-wait_time = 0.3
+[node name="attack_duration" type="Timer" parent="state_machine_action/attack"]
 
 [node name="state_machine_movement" type="Node" parent="."]
 script = ExtResource("1_wo1xs")

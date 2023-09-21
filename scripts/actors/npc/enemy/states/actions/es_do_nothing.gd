@@ -1,7 +1,7 @@
 extends enemy_state
 class_name ES_Do_Nothing_Till_Movement_State
 
-@export var movement_state_to_wait_for = "idle"
+@export var movement_state_to_wait_for = "stand_still"
 @export var action_state_to_transition_to = ""
 
 func s_enter(msg: Dictionary = {}):

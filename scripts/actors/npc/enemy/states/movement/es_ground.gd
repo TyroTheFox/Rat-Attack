@@ -1,7 +1,7 @@
 extends enemy_state
 class_name ES_Ground
 
-@export var next_state_on_target_reached = 'idle'
+@export var next_state_on_target_reached = 'stand_still'
 @export_node_path("MeshInstance3D") var meshbox
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func s_physics_update(delta):

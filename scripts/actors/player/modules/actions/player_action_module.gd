@@ -1,7 +1,7 @@
 extends Node
 class_name Player_Action_Module
 
-var player
+var player: Player
 
 var activated = false
 
@@ -16,15 +16,18 @@ func _ready():
 	# This check will tell us if we inadvertently assign a derived state script
 	# in a scene other than `Player.tscn`, which would be unintended. This can
 	# help prevent some bugs that are difficult to understand.
-	assert(player != null)
+	assert(player != null, "Module isn't attached to a player object")
 	
 	set_up()
 
 func set_up():
 	pass
 
-func activate( _delta, _button ):
-	pass
+func activate( _action_strength ):
+	activated = true
+
+func release():
+	activated = false
 
 func update( _delta, _button ):
 	pass

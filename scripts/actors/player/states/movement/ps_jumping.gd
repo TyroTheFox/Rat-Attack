@@ -17,10 +17,10 @@ func s_physics_update(delta):
 	
 	air_movement.vv = jump_movement.jump_speed
 	
-	if Input.is_action_just_released("p_jump"):
-		state_machine.transition_to('in_air')
-		if air_movement.vv > jump_movement.early_jump_termination:
-			air_movement.vv = jump_movement.early_jump_termination
+#	if Input.is_action_just_released("p_jump"):
+#		state_machine.transition_to('in_air')
+#		if air_movement.vv > jump_movement.early_jump_termination:
+#			air_movement.vv = jump_movement.early_jump_termination
 
 	linear_velocity.y = air_movement.vv
 

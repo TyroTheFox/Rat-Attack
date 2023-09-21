@@ -22,7 +22,7 @@ var coyote_time: Timer
 func _ready():
 	model = $model
 	state_machine = $state_machine_movement
-	action_state_machine = $state
+	action_state_machine = $state_machine_actions
 	movement_module = $modules/movement
 	coyote_time = $coyote_time
 

@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=23 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
 [ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="2_80xdb"]
+[ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hurtBox.gd" id="2_u2r7b"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_do_nothing.gd" id="3_bo2v2"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_idle.gd" id="3_cidi5"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_ground.gd" id="4_bksws"]
@@ -9,6 +10,8 @@
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_in_air.gd" id="5_h66b2"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy_movement.gd" id="6_dnh4y"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/base_rat_behaviour/es_pick_destroyable_target.gd" id="6_eysx4"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_be_stunned.gd" id="6_ld31g"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_stand_still.gd" id="6_vyirw"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_ground.gd" id="7_8huiu"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_air.gd" id="8_fv4rt"]
 
@@ -28,6 +31,9 @@ albedo_color = Color(0, 1, 0, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_h8x26"]
 material = SubResource("StandardMaterial3D_w1mq1")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k4l5g"]
+size = Vector3(1, 1.99504, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ao6hc"]
 radius = 0.25
@@ -54,6 +60,14 @@ transform = Transform3D(0.406248, 0, 0, 0, 1, 0, 0, 0, 0.327678, 0, 1.63811, 0.0
 mesh = SubResource("BoxMesh_h8x26")
 skeleton = NodePath("../meshbox")
 
+[node name="interaction_areas" type="Node3D" parent="."]
+
+[node name="hurtbox" type="Area3D" parent="interaction_areas"]
+script = ExtResource("2_u2r7b")
+
+[node name="shape" type="CollisionShape3D" parent="interaction_areas/hurtbox"]
+shape = SubResource("BoxShape3D_k4l5g")
+
 [node name="collision_box" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_ao6hc")
 
@@ -68,12 +82,18 @@ action_state_to_transition_to = "hurt_destructable"
 [node name="hurt_destructable" type="Node" parent="state_machine_actions"]
 script = ExtResource("4_mfc76")
 
+[node name="stunned" type="Node" parent="state_machine_actions"]
+script = ExtResource("6_ld31g")
+
+[node name="stun_timer" type="Timer" parent="state_machine_actions/stunned"]
+wait_time = 3.0
+
 [node name="state_machine_movement" type="Node" parent="."]
 script = ExtResource("2_80xdb")
 initial_state = NodePath("pick_target")
 
-[node name="idle" type="Node" parent="state_machine_movement"]
-script = ExtResource("3_cidi5")
+[node name="stand_still" type="Node" parent="state_machine_movement"]
+script = ExtResource("6_vyirw")
 meshbox = NodePath("../../model/mesh/meshbox2")
 
 [node name="ground" type="Node" parent="state_machine_movement"]
@@ -85,6 +105,9 @@ script = ExtResource("5_h66b2")
 
 [node name="pick_target" type="Node" parent="state_machine_movement"]
 script = ExtResource("6_eysx4")
+
+[node name="idle" type="Node" parent="state_machine_movement"]
+script = ExtResource("3_cidi5")
 
 [node name="modules" type="Node" parent="."]
 

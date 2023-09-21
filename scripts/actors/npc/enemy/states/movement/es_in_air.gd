@@ -1,7 +1,7 @@
 extends enemy_state
 class_name ES_In_Air
 
-@export var next_state_on_target_reached = 'idle'
+@export var next_state_on_target_reached = 'stand_still'
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func s_physics_update(delta):

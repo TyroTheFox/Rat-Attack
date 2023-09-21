@@ -100,7 +100,8 @@ func _on_destructable_detroyed(id: int):
 	var destructable = destructable_objects.filter(func(object: SC_Destructable): return object.id == id)
 	
 	if destructable.size() > 0:
-		(destructable[0] as SC_Destructable).connect('destroyed', _on_destructable_detroyed)
+		if (destructable[0] as SC_Destructable).is_connected('destroyed', _on_destructable_detroyed):
+			(destructable[0] as SC_Destructable).connect('destroyed', _on_destructable_detroyed)
 		destructable_objects.erase(destructable[0])
 
 func _on_spawn_timer_timeout():

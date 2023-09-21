@@ -16,13 +16,13 @@ func s_physics_update(delta):
 		coyote_timer.start()
 		return
 
-	# Handle Jump.
-	if Input.is_action_just_pressed("p_jump") and player.is_on_floor():
-		if !coyote_timer.is_stopped():
-			coyote_timer.stop()
-		# Move to jump state
-		state_machine.transition_to('jumping')
-		return
+#	# Handle Jump.
+#	if Input.is_action_just_pressed("p_jump") and player.is_on_floor():
+#		if !coyote_timer.is_stopped():
+#			coyote_timer.stop()
+#		# Move to jump state
+#		state_machine.transition_to('jumping')
+#		return
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
