@@ -1,0 +1,159 @@
+[gd_scene load_steps=16 format=3 uid="uid://d3x5e51wajm45"]
+
+[ext_resource type="Script" path="res://scripts/structure/interaction/player_action_handler/player_action_handler.gd" id="1_trrtl"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_attack.gd" id="2_ujf22"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_jump.gd" id="3_pml8j"]
+[ext_resource type="Script" path="res://scripts/actors/player/player_actions.gd" id="4_olnu3"]
+[ext_resource type="Script" path="res://scripts/actors/state_chart/player/sch_player_actions.gd" id="5_2xjnn"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="5_i4or1"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/parallel_state.gd" id="6_uumy3"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/compound_state.gd" id="7_a1lym"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/atomic_state.gd" id="8_brp3n"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/transition.gd" id="9_3616g"]
+[ext_resource type="Script" path="res://scripts/actors/player/player_movement.gd" id="10_rfxrm"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_ground.gd" id="11_umb1i"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_air.gd" id="12_gx8c7"]
+[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_jump.gd" id="13_pnj63"]
+[ext_resource type="Script" path="res://scripts/actors/state_chart/player/sch_player_movement.gd" id="15_4n3fs"]
+
+[node name="player_movement" type="Node"]
+
+[node name="actions" type="Node" parent="."]
+
+[node name="player_actions" type="Node" parent="actions"]
+script = ExtResource("1_trrtl")
+
+[node name="p_attack" type="Node" parent="actions/player_actions"]
+
+[node name="pam_Attack" type="Node" parent="actions/player_actions/p_attack"]
+script = ExtResource("2_ujf22")
+
+[node name="p_capture" type="Node" parent="actions/player_actions"]
+
+[node name="p_jump" type="Node" parent="actions/player_actions"]
+
+[node name="pam_Jump" type="Node" parent="actions/player_actions/p_jump"]
+script = ExtResource("3_pml8j")
+
+[node name="module" type="Node" parent="actions"]
+script = ExtResource("4_olnu3")
+
+[node name="state_chart" type="Node" parent="actions"]
+script = ExtResource("5_2xjnn")
+
+[node name="actions" type="Node" parent="actions/state_chart"]
+script = ExtResource("5_i4or1")
+
+[node name="Root" type="Node" parent="actions/state_chart/actions"]
+script = ExtResource("6_uumy3")
+
+[node name="Action" type="Node" parent="actions/state_chart/actions/Root"]
+script = ExtResource("7_a1lym")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="actions/state_chart/actions/Root/Action"]
+script = ExtResource("8_brp3n")
+
+[node name="On Attack" type="Node" parent="actions/state_chart/actions/Root/Action/Idle"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Attack")
+event = &"attack"
+
+[node name="Attack" type="Node" parent="actions/state_chart/actions/Root/Action"]
+script = ExtResource("8_brp3n")
+
+[node name="On Attack End" type="Node" parent="actions/state_chart/actions/Root/Action/Attack"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Idle")
+event = &"idle"
+delay_seconds = 0.3
+
+[node name="movement" type="Node" parent="."]
+
+[node name="modules" type="Node" parent="movement"]
+script = ExtResource("10_rfxrm")
+
+[node name="ground_movement" type="Node" parent="movement/modules"]
+script = ExtResource("11_umb1i")
+TURN_SPEED = 500
+
+[node name="air_movement" type="Node" parent="movement/modules"]
+script = ExtResource("12_gx8c7")
+air_idle_deaccel = null
+deaccel = 70.0
+TURN_SPEED = 45
+
+[node name="jump_movement" type="Node" parent="movement/modules"]
+script = ExtResource("13_pnj63")
+jump_height = 5.0
+jump_time = 6.0
+minumum_jump_height_percentage = 0.25
+
+[node name="state_chart" type="Node" parent="movement"]
+script = ExtResource("15_4n3fs")
+
+[node name="movement" type="Node" parent="movement/state_chart"]
+script = ExtResource("5_i4or1")
+
+[node name="Root" type="Node" parent="movement/state_chart/movement"]
+script = ExtResource("6_uumy3")
+
+[node name="Movement_State" type="Node" parent="movement/state_chart/movement/Root"]
+script = ExtResource("7_a1lym")
+initial_state = NodePath("Ground")
+
+[node name="Ground" type="Node" parent="movement/state_chart/movement/Root/Movement_State"]
+script = ExtResource("8_brp3n")
+
+[node name="On Jump" type="Node" parent="movement/state_chart/movement/Root/Movement_State/Ground"]
+script = ExtResource("9_3616g")
+to = NodePath("../../In Air/Jumping")
+event = &"jump"
+
+[node name="On In Air" type="Node" parent="movement/state_chart/movement/Root/Movement_State/Ground"]
+script = ExtResource("9_3616g")
+to = NodePath("../../In Air")
+event = &"in_air"
+
+[node name="In Air" type="Node" parent="movement/state_chart/movement/Root/Movement_State"]
+script = ExtResource("7_a1lym")
+initial_state = NodePath("Coyote Time")
+
+[node name="On Land" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Ground")
+event = &"grounded"
+
+[node name="Coyote Time" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air"]
+script = ExtResource("8_brp3n")
+
+[node name="On Jump" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air/Coyote Time"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Jumping")
+event = &"jump"
+
+[node name="On Expire" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air/Coyote Time"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Cannot Jump")
+delay_seconds = 0.2
+
+[node name="Jumping" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air"]
+script = ExtResource("8_brp3n")
+
+[node name="On Jump" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air/Jumping"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Cannot Jump")
+event = &"jump"
+
+[node name="On Early Release" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air/Jumping"]
+script = ExtResource("9_3616g")
+to = NodePath("../../Cannot Jump")
+event = &"early_release"
+
+[node name="Cannot Jump" type="Node" parent="movement/state_chart/movement/Root/Movement_State/In Air"]
+script = ExtResource("8_brp3n")
+
+[connection signal="state_physics_processing" from="movement/state_chart/movement/Root/Movement_State/Ground" to="movement/state_chart" method="_handle_jumping"]
+[connection signal="state_physics_processing" from="movement/state_chart/movement/Root/Movement_State/In Air/Coyote Time" to="movement/state_chart" method="_handle_jumping"]
+[connection signal="event_received" from="movement/state_chart/movement/Root/Movement_State/In Air/Jumping" to="movement/state_chart" method="_on_jumping_event_received"]
+[connection signal="state_entered" from="movement/state_chart/movement/Root/Movement_State/In Air/Cannot Jump" to="movement/state_chart" method="_on_cannot_jump_state_entered"]

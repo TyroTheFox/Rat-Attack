@@ -18,6 +18,10 @@ var navigation_agent: NavigationAgent3D
 
 ## Whether or not the Navmesh is ready to use yet
 var ready_to_start: bool = false
+## Stops the movement while active
+var hault_movement = false
+
+@onready var movement_state_chart = $"../state_chart"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -57,3 +61,43 @@ func actor_setup():
 
 	# Now that the navigation map is no longer empty, set the movement target.
 	set_movement_target(movement_target_position)
+
+	enemy._on_pick_target_state_entered()
+
+func process_movement(delta: float, velocity: Vector3, is_on_floor: bool):
+	var returnVelocity: Vector3 = Vector3()
+
+	if is_on_floor:
+		#$model/mesh/meshbox.visible = false
+		enemy.set_collision_mask_value(2, false)
+		returnVelocity = handleBasicGroundMovement(
+			delta,
+			velocity
+		)
+	else:
+		returnVelocity = handleBasicIn_AirMovement(
+			delta,
+			velocity
+		)
+	
+		returnVelocity = calculateGravity(delta, returnVelocity)
+	
+	if is_target_reached():
+		movement_state_chart.send_event('target_reached')
+	
+	if hault_movement:
+		returnVelocity.x = 0
+		returnVelocity.z = 0
+	
+	return returnVelocity
+
+func handleBasicGroundMovement(delta, velocity):
+	return ground_movement.process_movement(delta, velocity)
+
+func handleBasicIn_AirMovement(delta, velocity):
+	return in_air_movement.process_movement(delta, velocity)
+
+func calculateGravity(delta, velocity):
+	velocity.y = -gravity
+
+	return velocity

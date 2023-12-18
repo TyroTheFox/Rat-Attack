@@ -9,3 +9,4 @@ name = "base_rat"
 display_name = "Rat"
 scene_path = "res://scenes/actors/npc/enemy/e_rat.tscn"
 rarity = 4
+maximum_allowed = 1

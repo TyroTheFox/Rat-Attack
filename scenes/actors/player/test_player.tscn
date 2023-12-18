@@ -1,22 +1,9 @@
-[gd_scene load_steps=25 format=3 uid="uid://b6wdlxxdj788n"]
+[gd_scene load_steps=12 format=3 uid="uid://b6wdlxxdj788n"]
 
 [ext_resource type="Script" path="res://scripts/actors/player/player.gd" id="1_427t1"]
-[ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="1_wo1xs"]
-[ext_resource type="Script" path="res://scripts/structure/interaction/player_action_handler/player_action_handler.gd" id="2_jf6fl"]
 [ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hitBox.gd" id="2_rehvc"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_ground.gd" id="3_41yy3"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_attack.gd" id="3_87aoj"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/actions/ps_idle.gd" id="3_wr56u"]
-[ext_resource type="Script" path="res://scripts/actors/player/player_movement.gd" id="4_3yoex"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/actions/ps_attack.gd" id="4_16xqv"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_jumping.gd" id="4_o107l"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/actions/modules/pam_jump.gd" id="5_b4l1x"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air.gd" id="5_jgij0"]
-[ext_resource type="Script" path="res://scripts/actors/player/states/movement/ps_in_air_coyote_time.gd" id="6_mibhb"]
-[ext_resource type="Script" path="res://scripts/actors/player/player_actions.gd" id="8_y0an7"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_ground.gd" id="9_qj60t"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_air.gd" id="10_w7pqr"]
-[ext_resource type="Script" path="res://scripts/actors/player/modules/movement/m_player_jump.gd" id="11_sxcrd"]
+[ext_resource type="PackedScene" uid="uid://d3x5e51wajm45" path="res://scenes/actors/player/modules/ms_player_movement.tscn" id="3_jm5wh"]
+[ext_resource type="PackedScene" uid="uid://bcwkugn6v3oy7" path="res://addons/godot_state_charts/utilities/state_chart_debugger.tscn" id="16_fqvvn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mptt7"]
 size = Vector3(1, 1.98367, 1)
@@ -51,10 +38,6 @@ script = ExtResource("1_427t1")
 [node name="collision_box" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_mptt7")
 
-[node name="coyote_time" type="Timer" parent="."]
-process_callback = 0
-wait_time = 0.5
-
 [node name="model" type="Node3D" parent="."]
 
 [node name="mesh" type="MeshInstance3D" parent="model"]
@@ -78,74 +61,13 @@ shape = SubResource("CylinderShape3D_dv77c")
 [node name="debug" type="MeshInstance3D" parent="interaction_areas/attack_hitbox"]
 mesh = SubResource("CylinderMesh_e84ae")
 
-[node name="player_actions" type="Node" parent="."]
-script = ExtResource("2_jf6fl")
+[node name="player_movement" parent="." instance=ExtResource("3_jm5wh")]
 
-[node name="p_attack" type="Node" parent="player_actions"]
+[node name="debug" type="Node2D" parent="."]
 
-[node name="pam_Attack" type="Node" parent="player_actions/p_attack"]
-script = ExtResource("3_87aoj")
-
-[node name="p_capture" type="Node" parent="player_actions"]
-
-[node name="p_jump" type="Node" parent="player_actions"]
-
-[node name="pam_Jump" type="Node" parent="player_actions/p_jump"]
-script = ExtResource("5_b4l1x")
-
-[node name="state_machine_actions" type="Node" parent="."]
-script = ExtResource("1_wo1xs")
-initial_state = NodePath("idle")
-
-[node name="idle" type="Node" parent="state_machine_actions"]
-script = ExtResource("3_wr56u")
-
-[node name="attack" type="Node" parent="state_machine_actions"]
-script = ExtResource("4_16xqv")
-hitbox_path = NodePath("../../interaction_areas/attack_hitbox")
-
-[node name="attack_duration" type="Timer" parent="state_machine_actions/attack"]
-wait_time = 0.3
-
-[node name="state_machine_movement" type="Node" parent="."]
-script = ExtResource("1_wo1xs")
-initial_state = NodePath("ground")
-
-[node name="ground" type="Node" parent="state_machine_movement"]
-script = ExtResource("3_41yy3")
-
-[node name="jumping" type="Node" parent="state_machine_movement"]
-script = ExtResource("4_o107l")
-
-[node name="in_air" type="Node" parent="state_machine_movement"]
-script = ExtResource("5_jgij0")
-
-[node name="in_air_coyote_time" type="Node" parent="state_machine_movement"]
-script = ExtResource("6_mibhb")
-
-[node name="modules" type="Node" parent="."]
-
-[node name="actions" type="Node" parent="modules"]
-script = ExtResource("8_y0an7")
-
-[node name="movement" type="Node" parent="modules"]
-script = ExtResource("4_3yoex")
-key_bind_left = null
-key_bind_right = null
-key_bind_up = null
-key_bind_down = null
-
-[node name="ground_movement" type="Node" parent="modules/movement"]
-script = ExtResource("9_qj60t")
-TURN_SPEED = 500
-
-[node name="air_movement" type="Node" parent="modules/movement"]
-script = ExtResource("10_w7pqr")
-accel = 22.5
-deaccel = 180.0
-TURN_SPEED = 500
-
-[node name="jump_movement" type="Node" parent="modules/movement"]
-script = ExtResource("11_sxcrd")
-jump_height = 5.0
-jump_time = 6.0
+[node name="StateChartDebugger" parent="debug" instance=ExtResource("16_fqvvn")]
+offset_left = 11.0
+offset_top = 436.0
+offset_right = 371.0
+offset_bottom = 629.0
+initial_node_to_watch = NodePath("../..")

@@ -3,10 +3,9 @@ class_name Player_Action_Handler
 
 var action_list = {}
 
-var state_machine_movement: StateMachine
-var state_machine_action: StateMachine
+var _state_chart: StateChart
 
-func _ready():
+func init(owned_player: Player):
 	var action_nodes = get_children()
 	
 	for node in action_nodes:
@@ -14,6 +13,7 @@ func _ready():
 		
 		if node_children.size() > 0:
 			action_list[node.name] = node_children[0]
+			action_list[node.name].init(owned_player)
 
 func _input(event):
 	for key in action_list:

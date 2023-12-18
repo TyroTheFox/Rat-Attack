@@ -1,19 +1,16 @@
-[gd_scene load_steps=23 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=20 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
-[ext_resource type="Script" path="res://scripts/structure/state_machine/state_machine.gd" id="2_80xdb"]
 [ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hurtBox.gd" id="2_u2r7b"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_do_nothing.gd" id="3_bo2v2"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_idle.gd" id="3_cidi5"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_ground.gd" id="4_bksws"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_hurt_destructable.gd" id="4_mfc76"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_in_air.gd" id="5_h66b2"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="3_m6xfd"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/parallel_state.gd" id="4_yxkm4"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/compound_state.gd" id="5_6uxcl"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/atomic_state.gd" id="6_5wovt"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy_movement.gd" id="6_dnh4y"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/base_rat_behaviour/es_pick_destroyable_target.gd" id="6_eysx4"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/actions/es_be_stunned.gd" id="6_ld31g"]
-[ext_resource type="Script" path="res://scripts/actors/npc/enemy/states/movement/es_stand_still.gd" id="6_vyirw"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_ground.gd" id="7_8huiu"]
+[ext_resource type="Script" path="res://addons/godot_state_charts/transition.gd" id="7_j3mc7"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_air.gd" id="8_fv4rt"]
+[ext_resource type="Script" path="res://scripts/actors/state_chart/npc/enemy/sch_Base_Rat_Movement.gd" id="11_s7xuv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w88a2"]
 albedo_color = Color(0.976471, 0, 0, 1)
@@ -71,56 +68,6 @@ shape = SubResource("BoxShape3D_k4l5g")
 [node name="collision_box" type="CollisionShape3D" parent="."]
 shape = SubResource("CylinderShape3D_ao6hc")
 
-[node name="state_machine_actions" type="Node" parent="."]
-script = ExtResource("2_80xdb")
-initial_state = NodePath("do_nothing_till_idle")
-
-[node name="do_nothing_till_idle" type="Node" parent="state_machine_actions"]
-script = ExtResource("3_bo2v2")
-action_state_to_transition_to = "hurt_destructable"
-
-[node name="hurt_destructable" type="Node" parent="state_machine_actions"]
-script = ExtResource("4_mfc76")
-
-[node name="stunned" type="Node" parent="state_machine_actions"]
-script = ExtResource("6_ld31g")
-
-[node name="stun_timer" type="Timer" parent="state_machine_actions/stunned"]
-wait_time = 3.0
-
-[node name="state_machine_movement" type="Node" parent="."]
-script = ExtResource("2_80xdb")
-initial_state = NodePath("pick_target")
-
-[node name="stand_still" type="Node" parent="state_machine_movement"]
-script = ExtResource("6_vyirw")
-meshbox = NodePath("../../model/mesh/meshbox2")
-
-[node name="ground" type="Node" parent="state_machine_movement"]
-script = ExtResource("4_bksws")
-meshbox = NodePath("../../model/mesh/meshbox2")
-
-[node name="in_air" type="Node" parent="state_machine_movement"]
-script = ExtResource("5_h66b2")
-
-[node name="pick_target" type="Node" parent="state_machine_movement"]
-script = ExtResource("6_eysx4")
-
-[node name="idle" type="Node" parent="state_machine_movement"]
-script = ExtResource("3_cidi5")
-
-[node name="modules" type="Node" parent="."]
-
-[node name="movement" type="Node" parent="modules"]
-script = ExtResource("6_dnh4y")
-
-[node name="ground_movement" type="Node" parent="modules/movement"]
-script = ExtResource("7_8huiu")
-movement_speed = 10.0
-
-[node name="air_movement" type="Node" parent="modules/movement"]
-script = ExtResource("8_fv4rt")
-
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 target_desired_distance = 3.0
 path_max_distance = 3.01
@@ -131,5 +78,188 @@ debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 debug_path_custom_point_size = 11.41
 
-[node name="make_attack" type="Timer" parent="."]
-wait_time = 5.0
+[node name="base_rat_movement" type="Node" parent="."]
+
+[node name="actions" type="Node" parent="base_rat_movement"]
+
+[node name="modules" type="Node" parent="base_rat_movement/actions"]
+
+[node name="state_chart" type="Node" parent="base_rat_movement/actions"]
+
+[node name="actions" type="Node" parent="base_rat_movement/actions/state_chart"]
+script = ExtResource("3_m6xfd")
+
+[node name="Root" type="Node" parent="base_rat_movement/actions/state_chart/actions"]
+script = ExtResource("4_yxkm4")
+
+[node name="Action" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root"]
+script = ExtResource("5_6uxcl")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+script = ExtResource("6_5wovt")
+
+[node name="On Hurt Destructable" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Idle"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Hurt Destructable")
+event = &"hurt"
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Idle"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Stunned")
+event = &"stunned"
+
+[node name="Hurt Destructable" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+script = ExtResource("6_5wovt")
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Stunned")
+event = &"stunned"
+
+[node name="On Target Destroyed" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Idle")
+event = &"target_destroyed"
+
+[node name="On Attack" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Land Damage")
+event = &"hurt"
+
+[node name="Land Damage" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+script = ExtResource("6_5wovt")
+
+[node name="On Damage Landed" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Hurt Destructable")
+event = &"hurt"
+delay_seconds = 5.0
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Stunned")
+event = &"stunned"
+
+[node name="Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+script = ExtResource("6_5wovt")
+
+[node name="On Expired" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Stunned"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Idle")
+event = &"stunned"
+delay_seconds = 3.0
+
+[node name="movement" type="Node" parent="base_rat_movement"]
+
+[node name="modules" type="Node" parent="base_rat_movement/movement"]
+script = ExtResource("6_dnh4y")
+
+[node name="ground_movement" type="Node" parent="base_rat_movement/movement/modules"]
+script = ExtResource("7_8huiu")
+movement_speed = 10.0
+
+[node name="air_movement" type="Node" parent="base_rat_movement/movement/modules"]
+script = ExtResource("8_fv4rt")
+
+[node name="state_chart" type="Node" parent="base_rat_movement/movement"]
+script = ExtResource("11_s7xuv")
+
+[node name="movement" type="Node" parent="base_rat_movement/movement/state_chart"]
+script = ExtResource("3_m6xfd")
+
+[node name="Root" type="Node" parent="base_rat_movement/movement/state_chart/movement"]
+script = ExtResource("4_yxkm4")
+
+[node name="Movement State" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root"]
+script = ExtResource("5_6uxcl")
+initial_state = NodePath("Pick Target")
+
+[node name="Idle" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+script = ExtResource("6_5wovt")
+
+[node name="On Resume" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Pick Target")
+event = &"resume"
+
+[node name="Pick Target" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+script = ExtResource("6_5wovt")
+
+[node name="On Ground" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Ground")
+event = &"ground"
+
+[node name="On In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../In Air")
+event = &"in_air"
+
+[node name="In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+script = ExtResource("6_5wovt")
+
+[node name="On Landed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Ground")
+event = &"ground"
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Idle")
+event = &"stunned"
+
+[node name="On Target Reached" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Stand Still")
+event = &"target_reached"
+
+[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Pick Target")
+event = &"target_destroyed"
+
+[node name="Ground" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+script = ExtResource("6_5wovt")
+
+[node name="On In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../In Air")
+event = &"in_air"
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Idle")
+event = &"stunned"
+
+[node name="On Target Reached" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Stand Still")
+event = &"target_reached"
+
+[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Pick Target")
+event = &"target_destroyed"
+
+[node name="Stand Still" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+script = ExtResource("6_5wovt")
+
+[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Idle")
+event = &"stunned"
+
+[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still"]
+script = ExtResource("7_j3mc7")
+to = NodePath("../../Pick Target")
+event = &"target_destroyed"
+
+[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable" to="." method="_on_hurt_destructable_state_entered"]
+[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage" to="." method="_on_land_damage_state_entered"]
+[connection signal="state_physics_processing" from="base_rat_movement/actions/state_chart/actions/Root/Action/Stunned" to="." method="_on_stunned_state_physics_processing"]
+[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_stunned"]
+[connection signal="state_exited" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_unstunned"]
+[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target" to="base_rat_movement/movement/state_chart" method="_on_pick_target_state_entered"]
+[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_movement/movement/state_chart" method="_on_stand_still_state_entered"]
+[connection signal="state_exited" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_movement/movement/state_chart" method="_on_stand_still_state_exited"]

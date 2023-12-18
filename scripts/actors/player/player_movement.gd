@@ -19,22 +19,54 @@ var air_movement: m_Player_Air_Movement
 ## Jump Movement Module
 var jump_movement: m_Player_Jump
 
+var jumping = false
+var early_release = false
+
 ## Player Gravity
 var gravity
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func init(owned_player: Player):
 	ground_movement = $ground_movement
 	air_movement = $air_movement
 	jump_movement = $jump_movement
 	
-	gravity = jump_movement.jump_height/2*(jump_movement.jump_time * jump_movement.jump_time)
+	ground_movement.init(owned_player)
+	air_movement.init(owned_player)
+	jump_movement.init(owned_player)
+	
+	gravity = jump_movement.gravity
+
+func process_movement(velocity: Vector3, is_on_floor: bool, delta: float, cameraBasisVector: Basis):
+	var returnVelocity: Vector3 = Vector3()
+	
+	if is_on_floor:
+		returnVelocity = handleBasicGroundMovement(
+			cameraBasisVector, 
+			delta, 
+			velocity 
+		)
+	else:
+		returnVelocity = handleBasicAerialMovement(
+			cameraBasisVector, 
+			delta, 
+			velocity 
+		)
+
+		returnVelocity = calculateGravity(delta, returnVelocity)
+	
+	return returnVelocity
 
 # Calculates the direction a character should move, based on where the camera is in relation to the
 # player character, assuming that pushing up on the controller should move away from the camera
 func calculateMovementVectorBasedOnCameraOrientation(cameraBasisVector):
 	var input_dir = Input.get_vector(key_bind_left, key_bind_right, key_bind_up, key_bind_down)
 	return calculateForwardVector(input_dir, cameraBasisVector)
+
+func calculateGravity(delta, velocity):
+	velocity.y = ( Vector3.UP.y * velocity.y ) - (gravity * delta)
+
+	return velocity
 
 # Handles basic ground movement
 func handleBasicGroundMovement(cameraBasisVector, delta, velocity):
@@ -45,6 +77,20 @@ func handleBasicGroundMovement(cameraBasisVector, delta, velocity):
 func handleBasicAerialMovement(cameraBasisVector, delta, velocity):
 	var direction = calculateMovementVectorBasedOnCameraOrientation(cameraBasisVector)
 	return air_movement.process_movement(delta, velocity, direction)
+
+# Handles basic jumping movement
+func handleJumpingMovement(velocity: Vector3, state_chart: StateChart):
+	velocity.y = jump_movement.jump_speed
+	jumping = false
+	early_release = true
+	state_chart.send_event("jump")
+	return velocity
+
+func handleEarlyJumpTermination(velocity: Vector3, state_chart: StateChart):
+	velocity.y = jump_movement.jump_minSpeed
+	state_chart.send_event("early_release")
+	early_release = false
+	return velocity
 
 # Calculates a 'Forward' vector, based on where the player character is in relation to the camera.
 # A forward vector being 'forward' according to the camera's perspective, that is to say, moving
