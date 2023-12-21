@@ -33,8 +33,10 @@ func _on_pick_target_state_entered():
 	entity.current_destructable_target = new_destructable_target
 
 func _on_stand_still_state_entered():
-	entity.model.look_at(entity.current_destructable_target.get_position(), Vector3.UP, true)
+	if entity.current_destructable_target:
+		entity.model.look_at(entity.current_destructable_target.get_position(), Vector3.UP, true)
 	movement_module.hault_movement = true
+	$"../../actions/state_chart".send_chart_event('hurt')
 	
 	#$model/mesh/meshbox.visible = true
 	entity.set_collision_mask_value(2, true)

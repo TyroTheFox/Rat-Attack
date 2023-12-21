@@ -8,10 +8,6 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var model
 ## Camera the player object is handed
 var level_camera: Camera3D
-## State Chart governing movement ability
-@onready var movement_state_chart: StateChart = $movement/state_chart/movement
-## State Chart governing actions and abilities
-@onready var action_state_chart: StateChart = $action/state_chart
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

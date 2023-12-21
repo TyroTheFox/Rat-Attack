@@ -24,15 +24,15 @@ var hault_movement = false
 @onready var movement_state_chart = $"../state_chart"
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	await owner.ready
-	enemy = owner as Enemy
-	assert(enemy != null)
-
+func init(owned_enemy: Enemy):
+	enemy = owned_enemy
 	gravity = enemy.gravity
 
 	ground_movement = $ground_movement
 	in_air_movement = $air_movement
+	
+	ground_movement.init(enemy)
+	in_air_movement.init(enemy)
 	
 	navigation_agent = enemy.navigation_agent
 	movement_target_position = enemy.position
@@ -62,7 +62,7 @@ func actor_setup():
 	# Now that the navigation map is no longer empty, set the movement target.
 	set_movement_target(movement_target_position)
 
-	enemy._on_pick_target_state_entered()
+	$"../state_chart"._on_pick_target_state_entered()
 
 func process_movement(delta: float, velocity: Vector3, is_on_floor: bool):
 	var returnVelocity: Vector3 = Vector3()
@@ -83,7 +83,7 @@ func process_movement(delta: float, velocity: Vector3, is_on_floor: bool):
 		returnVelocity = calculateGravity(delta, returnVelocity)
 	
 	if is_target_reached():
-		movement_state_chart.send_event('target_reached')
+		movement_state_chart.send_chart_event('target_reached')
 	
 	if hault_movement:
 		returnVelocity.x = 0

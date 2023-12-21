@@ -17,13 +17,9 @@ var movement_dir = Vector3()
 @export var TURN_SPEED = 140
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	await owner.ready
-	enemy = owner as Enemy
-	assert(enemy != null)
-	
-	mesh = enemy.model
-	
+func init(owned_enemy: Enemy):
+	enemy = owned_enemy
+	mesh = enemy.model	
 	parent_module = enemy.movement_module
 
 ## Handle movment

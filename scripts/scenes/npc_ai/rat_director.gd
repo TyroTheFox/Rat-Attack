@@ -54,9 +54,10 @@ func stop():
 func spawn_enemy(enemy: PackedScene, spawn_point: Vector3):
 	var new_enemy = enemy.instantiate() as Enemy;
 	
-	new_enemy.rat_director = self
+	#new_enemy.rat_director = self
 	spawn_node.add_child(new_enemy)
 	new_enemy.translate(spawn_point)
+	new_enemy.init(self)
 
 func select_destructable_target() -> SC_Destructable:
 	var random_index = randi() % destructable_objects.size()
