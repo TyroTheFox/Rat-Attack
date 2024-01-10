@@ -43,3 +43,12 @@ func _on_stand_still_state_entered():
 
 func _on_stand_still_state_exited():
 	movement_module.hault_movement = false
+
+func _on_land_damage_state_entered():
+	var current_destructable_target = entity.current_destructable_target
+	
+	if not current_destructable_target:
+		return
+	
+	if current_destructable_target.is_destroyed():
+		send_chart_event('target_destroyed')

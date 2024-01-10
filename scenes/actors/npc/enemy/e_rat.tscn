@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=23 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
 [ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hurtBox.gd" id="2_u2r7b"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://addons/godot_state_charts/transition.gd" id="7_j3mc7"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/movement/m_enemy_air.gd" id="8_fv4rt"]
 [ext_resource type="Script" path="res://scripts/actors/state_chart/npc/enemy/sch_Base_Rat_Movement.gd" id="11_s7xuv"]
+[ext_resource type="PackedScene" uid="uid://bcwkugn6v3oy7" path="res://addons/godot_state_charts/utilities/state_chart_debugger.tscn" id="14_2voea"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w88a2"]
 albedo_color = Color(0.976471, 0, 0, 1)
@@ -259,8 +260,31 @@ script = ExtResource("7_j3mc7")
 to = NodePath("../../Pick Target")
 event = &"target_destroyed"
 
+[node name="debug" type="Node2D" parent="."]
+visible = false
+
+[node name="StateChartDebugger" parent="debug" instance=ExtResource("14_2voea")]
+anchors_preset = -1
+anchor_right = 0.379
+anchor_bottom = 0.273
+offset_right = 0.391998
+offset_bottom = 0.095993
+initial_node_to_watch = NodePath("../../base_rat_movement/actions/state_chart/actions")
+
+[node name="StateChartDebugger2" parent="debug" instance=ExtResource("14_2voea")]
+anchors_preset = -1
+anchor_top = 0.281
+anchor_right = 0.378
+anchor_bottom = 0.576
+offset_left = 6.0
+offset_top = -0.0880127
+offset_right = 0.543976
+offset_bottom = -0.248016
+initial_node_to_watch = NodePath("../../base_rat_movement/movement/state_chart/movement")
+
 [connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable" to="base_rat_movement/actions/state_chart" method="_on_hurt_destructable_state_entered"]
 [connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_movement/actions/state_chart" method="_on_land_damage_state_entered"]
+[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_movement/movement/state_chart" method="_on_land_damage_state_entered"]
 [connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_stunned"]
 [connection signal="state_exited" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_unstunned"]
 [connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target" to="base_rat_movement/movement/state_chart" method="_on_pick_target_state_entered"]

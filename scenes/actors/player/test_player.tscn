@@ -64,6 +64,7 @@ mesh = SubResource("CylinderMesh_e84ae")
 [node name="player_movement" parent="." instance=ExtResource("3_jm5wh")]
 
 [node name="debug" type="Node2D" parent="."]
+visible = false
 
 [node name="StateChartDebugger" parent="debug" instance=ExtResource("16_fqvvn")]
 offset_left = 11.0

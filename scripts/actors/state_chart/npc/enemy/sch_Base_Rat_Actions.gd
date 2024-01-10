@@ -14,7 +14,6 @@ func _on_land_damage_state_entered():
 		return
 	
 	if current_destructable_target.is_destroyed():
-		send_chart_event('idle')
 		send_chart_event('target_destroyed')
 	else:
 		current_destructable_target.deal_damage($"../modules".damage)
