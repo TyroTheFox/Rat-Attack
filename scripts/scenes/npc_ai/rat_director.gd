@@ -13,6 +13,7 @@ var spawn_node: Node
 var spawn_queue: Array[int]
 var spawn_wait_time = 10.0
 var unique_spawned_rats: Array[int]
+var spawned_rats = {}
 var id_count = 0
 
 var destructable_objects: Array[SC_Destructable]
@@ -88,13 +89,16 @@ func prepare_to_spawn_enemy():
 	var UNIQUE_has_been_spawned = unique_spawned_rats.find(enemy_index)
 	
 	# If Enemy is Unique, make sure to only ever spawn only one of them
-	if is_UNIQUE and UNIQUE_has_been_spawned:
-		spawn_timer.start(spawn_wait_time)
-		return
-	else:
+	if !(is_UNIQUE and UNIQUE_has_been_spawned):
 		unique_spawned_rats.push_back(enemy_index)
 	
-	spawn_enemy(enemy_data.scene, rand_spawn_point)
+	if !spawned_rats.has(enemy_data.name):
+		spawned_rats[enemy_data.name] = 0
+
+	if spawned_rats[enemy_data.name] < enemy_data.maximum_allowed:
+		spawn_enemy(enemy_data.scene, rand_spawn_point)
+		spawned_rats[enemy_data.name] += 1
+	
 	spawn_timer.start(spawn_wait_time)
 
 func _on_destructable_detroyed(id: int):

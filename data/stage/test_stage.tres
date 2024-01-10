@@ -4,6 +4,6 @@
 
 [resource]
 script = ExtResource("1_886s5")
-rats_needed = 10
+rats_needed = 1
 time_limit = 1000
 spawn_delay = 5.0
