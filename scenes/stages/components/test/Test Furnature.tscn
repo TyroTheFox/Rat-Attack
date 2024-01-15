@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://3uscuriq02fo"]
+[gd_scene load_steps=10 format=3 uid="uid://3uscuriq02fo"]
 
 [ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_destructable.gd" id="1_blnnh"]
 [ext_resource type="Script" path="res://scripts/scenes/gameplay/stage/components/sc_has_gathering_area.gd" id="2_to88c"]
@@ -10,6 +10,8 @@ albedo_color = Color(0, 0, 1, 1)
 material = SubResource("StandardMaterial3D_unoi0")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2mpxb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lh6af"]
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_syk7s"]
 
@@ -45,6 +47,13 @@ shape = SubResource("BoxShape3D_2mpxb")
 
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="block"]
 radius = 0.5
+
+[node name="hurtbox" type="Area3D" parent="block"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="hurt_shape" type="CollisionShape3D" parent="block/hurtbox"]
+shape = SubResource("BoxShape3D_lh6af")
 
 [node name="spring_arm" type="SpringArm3D" parent="."]
 shape = SubResource("SeparationRayShape3D_syk7s")

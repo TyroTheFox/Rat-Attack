@@ -1,10 +1,11 @@
-[gd_scene load_steps=23 format=3 uid="uid://bci8xaqrahrq0"]
+[gd_scene load_steps=24 format=3 uid="uid://bci8xaqrahrq0"]
 
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy.gd" id="1_d3htw"]
 [ext_resource type="Script" path="res://scripts/structure/interaction/hitboxes/hurtBox.gd" id="2_u2r7b"]
 [ext_resource type="Script" path="res://scripts/actors/npc/enemy/enemy_actions.gd" id="3_8eskg"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/state_chart.gd" id="3_m6xfd"]
 [ext_resource type="Script" path="res://scripts/actors/state_chart/npc/enemy/sch_Base_Rat_Actions.gd" id="3_qikdg"]
+[ext_resource type="Script" path="res://scripts/actors/npc/enemy/modules/action/a_enemy_use_hitbox.gd" id="4_7u5yd"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/parallel_state.gd" id="4_yxkm4"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/compound_state.gd" id="5_6uxcl"]
 [ext_resource type="Script" path="res://addons/godot_state_charts/atomic_state.gd" id="6_5wovt"]
@@ -81,181 +82,184 @@ debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 debug_path_custom_point_size = 11.41
 
-[node name="base_rat_movement" type="Node" parent="."]
+[node name="base_rat_behaviour" type="Node" parent="."]
 
-[node name="actions" type="Node" parent="base_rat_movement"]
+[node name="actions" type="Node" parent="base_rat_behaviour"]
 
-[node name="modules" type="Node" parent="base_rat_movement/actions"]
+[node name="modules" type="Node" parent="base_rat_behaviour/actions"]
 script = ExtResource("3_8eskg")
 
-[node name="state_chart" type="Node" parent="base_rat_movement/actions"]
+[node name="attack_furnature" type="Node" parent="base_rat_behaviour/actions/modules"]
+script = ExtResource("4_7u5yd")
+
+[node name="state_chart" type="Node" parent="base_rat_behaviour/actions"]
 script = ExtResource("3_qikdg")
 
-[node name="actions" type="Node" parent="base_rat_movement/actions/state_chart"]
+[node name="actions" type="Node" parent="base_rat_behaviour/actions/state_chart"]
 script = ExtResource("3_m6xfd")
 
-[node name="Root" type="Node" parent="base_rat_movement/actions/state_chart/actions"]
+[node name="Root" type="Node" parent="base_rat_behaviour/actions/state_chart/actions"]
 script = ExtResource("4_yxkm4")
 
-[node name="Action" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root"]
+[node name="Action" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root"]
 script = ExtResource("5_6uxcl")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+[node name="Idle" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action"]
 script = ExtResource("6_5wovt")
 
-[node name="On Hurt Destructable" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Idle"]
+[node name="On Hurt Destructable" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Idle"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Hurt Destructable")
 event = &"hurt"
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Idle"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Idle"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Stunned")
 event = &"stunned"
 
-[node name="Hurt Destructable" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+[node name="Hurt Destructable" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action"]
 script = ExtResource("6_5wovt")
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Hurt Destructable"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Stunned")
 event = &"stunned"
 
-[node name="On Target Destroyed" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+[node name="On Target Destroyed" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Hurt Destructable"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Idle")
 event = &"target_destroyed"
 
-[node name="On Attack" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable"]
+[node name="On Attack" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Hurt Destructable"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Land Damage")
 event = &"hurt"
 
-[node name="Land Damage" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+[node name="Land Damage" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action"]
 script = ExtResource("6_5wovt")
 
-[node name="On Damage Landed" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage"]
+[node name="On Damage Landed" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Land Damage"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Hurt Destructable")
 event = &"hurt"
 delay_seconds = 5.0
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Land Damage"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Stunned")
 event = &"stunned"
 
-[node name="Stunned" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action"]
+[node name="Stunned" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action"]
 script = ExtResource("6_5wovt")
 
-[node name="On Expired" type="Node" parent="base_rat_movement/actions/state_chart/actions/Root/Action/Stunned"]
+[node name="On Expired" type="Node" parent="base_rat_behaviour/actions/state_chart/actions/Root/Action/Stunned"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Idle")
 event = &"stunned"
 delay_seconds = 3.0
 
-[node name="movement" type="Node" parent="base_rat_movement"]
+[node name="movement" type="Node" parent="base_rat_behaviour"]
 
-[node name="modules" type="Node" parent="base_rat_movement/movement"]
+[node name="modules" type="Node" parent="base_rat_behaviour/movement"]
 script = ExtResource("6_dnh4y")
 
-[node name="ground_movement" type="Node" parent="base_rat_movement/movement/modules"]
+[node name="ground_movement" type="Node" parent="base_rat_behaviour/movement/modules"]
 script = ExtResource("7_8huiu")
 movement_speed = 10.0
 
-[node name="air_movement" type="Node" parent="base_rat_movement/movement/modules"]
+[node name="air_movement" type="Node" parent="base_rat_behaviour/movement/modules"]
 script = ExtResource("8_fv4rt")
 
-[node name="state_chart" type="Node" parent="base_rat_movement/movement"]
+[node name="state_chart" type="Node" parent="base_rat_behaviour/movement"]
 script = ExtResource("11_s7xuv")
 
-[node name="movement" type="Node" parent="base_rat_movement/movement/state_chart"]
+[node name="movement" type="Node" parent="base_rat_behaviour/movement/state_chart"]
 script = ExtResource("3_m6xfd")
 
-[node name="Root" type="Node" parent="base_rat_movement/movement/state_chart/movement"]
+[node name="Root" type="Node" parent="base_rat_behaviour/movement/state_chart/movement"]
 script = ExtResource("4_yxkm4")
 
-[node name="Movement State" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root"]
+[node name="Movement State" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root"]
 script = ExtResource("5_6uxcl")
 initial_state = NodePath("Pick Target")
 
-[node name="Idle" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+[node name="Idle" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State"]
 script = ExtResource("6_5wovt")
 
-[node name="On Resume" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle"]
+[node name="On Resume" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Idle"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Pick Target")
 event = &"resume"
 
-[node name="Pick Target" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+[node name="Pick Target" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State"]
 script = ExtResource("6_5wovt")
 
-[node name="On Ground" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target"]
+[node name="On Ground" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Pick Target"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Ground")
 event = &"ground"
 
-[node name="On In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target"]
+[node name="On In Air" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Pick Target"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../In Air")
 event = &"in_air"
 
-[node name="In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+[node name="In Air" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State"]
 script = ExtResource("6_5wovt")
 
-[node name="On Landed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+[node name="On Landed" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/In Air"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Ground")
 event = &"ground"
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/In Air"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Idle")
 event = &"stunned"
 
-[node name="On Target Reached" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+[node name="On Target Reached" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/In Air"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Stand Still")
 event = &"target_reached"
 
-[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/In Air"]
+[node name="On Target Destroyed" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/In Air"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Pick Target")
 event = &"target_destroyed"
 
-[node name="Ground" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+[node name="Ground" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State"]
 script = ExtResource("6_5wovt")
 
-[node name="On In Air" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+[node name="On In Air" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Ground"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../In Air")
 event = &"in_air"
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Ground"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Idle")
 event = &"stunned"
 
-[node name="On Target Reached" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+[node name="On Target Reached" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Ground"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Stand Still")
 event = &"target_reached"
 
-[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Ground"]
+[node name="On Target Destroyed" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Ground"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Pick Target")
 event = &"target_destroyed"
 
-[node name="Stand Still" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State"]
+[node name="Stand Still" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State"]
 script = ExtResource("6_5wovt")
 
-[node name="On Stunned" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still"]
+[node name="On Stunned" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Stand Still"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Idle")
 event = &"stunned"
 
-[node name="On Target Destroyed" type="Node" parent="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still"]
+[node name="On Target Destroyed" type="Node" parent="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Stand Still"]
 script = ExtResource("7_j3mc7")
 to = NodePath("../../Pick Target")
 event = &"target_destroyed"
@@ -269,7 +273,7 @@ anchor_right = 0.379
 anchor_bottom = 0.273
 offset_right = 0.391998
 offset_bottom = 0.095993
-initial_node_to_watch = NodePath("../../base_rat_movement/actions/state_chart/actions")
+initial_node_to_watch = NodePath("../../base_rat_behaviour/actions/state_chart/actions")
 
 [node name="StateChartDebugger2" parent="debug" instance=ExtResource("14_2voea")]
 anchors_preset = -1
@@ -280,13 +284,13 @@ offset_left = 6.0
 offset_top = -0.0880127
 offset_right = 0.543976
 offset_bottom = -0.248016
-initial_node_to_watch = NodePath("../../base_rat_movement/movement/state_chart/movement")
+initial_node_to_watch = NodePath("../../base_rat_behaviour/movement/state_chart/movement")
 
-[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Hurt Destructable" to="base_rat_movement/actions/state_chart" method="_on_hurt_destructable_state_entered"]
-[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_movement/actions/state_chart" method="_on_land_damage_state_entered"]
-[connection signal="state_entered" from="base_rat_movement/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_movement/movement/state_chart" method="_on_land_damage_state_entered"]
-[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_stunned"]
-[connection signal="state_exited" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_movement/movement/state_chart" method="_on_unstunned"]
-[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Pick Target" to="base_rat_movement/movement/state_chart" method="_on_pick_target_state_entered"]
-[connection signal="state_entered" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_movement/movement/state_chart" method="_on_stand_still_state_entered"]
-[connection signal="state_exited" from="base_rat_movement/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_movement/movement/state_chart" method="_on_stand_still_state_exited"]
+[connection signal="state_entered" from="base_rat_behaviour/actions/state_chart/actions/Root/Action/Hurt Destructable" to="base_rat_behaviour/actions/state_chart" method="_on_hurt_destructable_state_entered"]
+[connection signal="state_entered" from="base_rat_behaviour/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_behaviour/actions/state_chart" method="_on_land_damage_state_entered"]
+[connection signal="state_entered" from="base_rat_behaviour/actions/state_chart/actions/Root/Action/Land Damage" to="base_rat_behaviour/movement/state_chart" method="_on_land_damage_state_entered"]
+[connection signal="state_entered" from="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_behaviour/movement/state_chart" method="_on_stunned"]
+[connection signal="state_exited" from="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Idle" to="base_rat_behaviour/movement/state_chart" method="_on_unstunned"]
+[connection signal="state_entered" from="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Pick Target" to="base_rat_behaviour/movement/state_chart" method="_on_pick_target_state_entered"]
+[connection signal="state_entered" from="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_behaviour/movement/state_chart" method="_on_stand_still_state_entered"]
+[connection signal="state_exited" from="base_rat_behaviour/movement/state_chart/movement/Root/Movement State/Stand Still" to="base_rat_behaviour/movement/state_chart" method="_on_stand_still_state_exited"]

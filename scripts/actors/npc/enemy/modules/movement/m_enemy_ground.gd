@@ -47,8 +47,7 @@ func process_movement(_delta: float, linear_velocity: Vector3):
 	if linear_velocity.length() > 0:
 		var facing = movement_dir
 		facing.y = 0
-		mesh.look_at(-facing * TURN_SPEED, Vector3.UP)
-		mesh.rotation.x = 0
-		mesh.rotation.z = 0
+		var newFacing = facing * TURN_SPEED
+		enemy.rotation.y = lerp_angle(enemy.rotation.y, atan2(newFacing.x, newFacing.z), 1)
 	
 	return linear_velocity

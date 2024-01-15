@@ -2,10 +2,10 @@ extends NPC
 class_name Enemy
 
 ## Movement Module
-@onready var movement_module: Enemy_Movement = $base_rat_movement/movement/modules
-@onready var movement_SCH: SCH_Base_Rat_Movement = $base_rat_movement/movement/state_chart
-@onready var actions_module: Enemy_Actions = $base_rat_movement/actions/modules
-@onready var actions_SCH: SCH_Base_Rat_Actions = $base_rat_movement/actions/state_chart
+@onready var movement_module: Enemy_Movement = $base_rat_behaviour/movement/modules
+@onready var movement_SCH: SCH_Base_Rat_Movement = $base_rat_behaviour/movement/state_chart
+@onready var actions_module: Enemy_Actions = $base_rat_behaviour/actions/modules
+@onready var actions_SCH: SCH_Base_Rat_Actions = $base_rat_behaviour/actions/state_chart
 ## Timer used to measure Coyote Time, a grace period where the player can still jump after falling off a ledge
 var make_attack_timer: Timer
 

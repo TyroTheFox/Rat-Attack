@@ -34,7 +34,8 @@ func _on_pick_target_state_entered():
 
 func _on_stand_still_state_entered():
 	if entity.current_destructable_target:
-		entity.model.look_at(entity.current_destructable_target.get_position(), Vector3.UP, true)
+		var lookAtTarget = entity.current_destructable_target.get_position()
+		entity.rotation.y = lerp_angle(entity.rotation.y, atan2(lookAtTarget.x, lookAtTarget.z), 1)
 	movement_module.hault_movement = true
 	$"../../actions/state_chart".send_chart_event('hurt')
 	
